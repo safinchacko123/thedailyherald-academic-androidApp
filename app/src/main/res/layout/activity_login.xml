@@ -1,0 +1,71 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#EC4235"
+    tools:context=".LoginActivity" >
+
+    <TextView
+        android:id="@+id/app_head"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/app_name_head"
+        android:textColor="#FFFFFF"
+        android:textSize="25dp"
+        android:textStyle="bold"
+        android:layout_margin="50dp"
+        android:gravity="center"
+        />
+
+    <TextView
+        android:id="@+id/loginHead"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_below="@+id/app_head"
+        android:text="LOGIN"
+        android:textColor="#FFFFFF"
+        android:textSize="18dp"
+        android:layout_margin="50dp"
+        android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/username"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/loginHead"
+        android:background="#30ffffff"
+        android:inputType="textPersonName"
+        android:text="Username"
+        android:textColorHint="@color/white"
+        android:textColor="@color/white"
+        android:layout_margin="10dp"
+        android:padding="20dp"/>
+
+    <EditText
+        android:id="@+id/password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/username"
+        android:background="#30ffffff"
+        android:inputType="textPassword"
+        android:text="Username"
+        android:textColorHint="@color/white"
+        android:textColor="@color/white"
+        android:layout_margin="10dp"
+        android:padding="20dp"/>
+
+    <Button
+        android:id="@+id/loginButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/password"
+        android:text="SUBMIT"
+        android:padding="20dp"
+        android:background="#30ffffff"
+        android:layout_margin="10dp"
+        />
+
+
+</RelativeLayout>
