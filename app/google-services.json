@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "675140980734",
+    "project_id": "thedailyherald-6fe2e",
+    "storage_bucket": "thedailyherald-6fe2e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:675140980734:android:be53c4ed7d084c8ba2faaf",
+        "android_client_info": {
+          "package_name": "com.w9565277.thedailyherald"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "675140980734-n1r6mkb34e5aan5c1tbcadfu4jqno4pt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyALsN3U3AF7xy3zrvCLw_rnovbfK8EJsU4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "675140980734-n1r6mkb34e5aan5c1tbcadfu4jqno4pt.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -67,5 +67,15 @@
         android:layout_margin="10dp"
         />
 
+    <Button
+        android:id="@+id/google_signin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/loginButton"
+        android:text="Login with Google"
+        android:padding="20dp"
+        android:background="#30ffffff"
+        android:layout_margin="10dp"/>
+
 
 </RelativeLayout>
