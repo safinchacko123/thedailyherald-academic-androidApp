@@ -8,7 +8,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="fill_parent"
     android:background="@color/theme_bg_dark_red"
     android:padding="5dp"
     tools:context=".NewsListingActivity">
@@ -25,10 +25,11 @@
 
 
     <LinearLayout
+        android:id="@+id/menu_layout"
         android:layout_width="match_parent"
         android:layout_height="30dp"
-        android:background="@color/white"
-        android:layout_marginTop="50dp">
+        android:layout_marginTop="50dp"
+        android:background="@color/white">
 
         <TextView
             android:id="@+id/menu_trending"
@@ -36,9 +37,9 @@
             android:layout_height="30dp"
             android:layout_marginTop="0dp"
             android:layout_weight=".50"
+            android:padding="5dp"
             android:text="Trending"
-            android:textColor="@color/theme_bg_dark_red"
-            android:padding="5dp"/>
+            android:textColor="@color/theme_bg_dark_red" />
 
         <Spinner
             android:id="@+id/menu_spinner"
@@ -46,7 +47,7 @@
             android:layout_height="30dp"
             android:layout_marginTop="0dp"
             android:layout_weight=".50"
-            android:textColor="@color/theme_bg_dark_red"/>
+            android:textColor="@color/theme_bg_dark_red" />
 
     </LinearLayout>
 
@@ -55,8 +56,9 @@
         android:id="@+id/simpleListView"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:divider="@color/material_blue_grey_800"
-        android:dividerHeight="1dp" />
+        android:layout_below="@id/menu_layout"
+        android:divider="@color/theme_txt_white"
+        android:dividerHeight="2dp" />
 
     <!--    <TextView-->
     <!--        android:layout_width="match_parent"-->
@@ -67,29 +69,42 @@
     <!--        />-->
 
 
-    <TextView
-        android:id="@+id/name"
+    <!--    <TextView-->
+    <!--        android:id="@+id/name"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_below="@id/headerfragment"-->
+    <!--        android:text=""-->
+    <!--        android:textSize="30sp" />-->
+
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/headerfragment"
-        android:text=""
-        android:textSize="30sp" />
-
-    <TextView
-        android:id="@+id/email"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/name"
-        android:text="Email"
-        android:textSize="30sp" />
+        android:layout_below="@id/simpleListView"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="bottom"
+        android:orientation="vertical"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp">
 
 
+        <TextView
+            android:id="@+id/email"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="Email"
+            android:textSize="20dp" />
 
-    <Button
-        android:id="@+id/logout"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-         android:text="Logout" />
+
+        <Button
+            android:id="@+id/logout"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:text="Logout" />
+    </LinearLayout>
 
 
 </RelativeLayout>

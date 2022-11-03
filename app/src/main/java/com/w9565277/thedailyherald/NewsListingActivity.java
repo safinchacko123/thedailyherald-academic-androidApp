@@ -34,7 +34,17 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class NewsListingActivity extends AppCompatActivity {
@@ -115,6 +125,8 @@ public class NewsListingActivity extends AppCompatActivity {
                 Toast.makeText(getBaseContext(), "Your answer is correct!", Toast.LENGTH_SHORT).show();
             }
         });
+
+        loadData();
     }
 
     private void SignOut() {
@@ -139,13 +151,55 @@ public class NewsListingActivity extends AppCompatActivity {
                     public void onResponse(String response) {
                         Log.d("worked", response);
                         ListView simpleList;
-                        String countryList[] = {"India", "China", "australia", "Portugle", "America", "NewZealand"};
+                        //String countryList[] = {"India", "China", "australia", "Portugle", "America", "NewZealand"};
+                        ArrayList<String> countryList = new ArrayList<String>();
+
                         simpleList = (ListView)findViewById(R.id.simpleListView);
                         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.activity_news_list_view, R.id.textView2, countryList);
+                        String status = null;
+                        JSONObject json2 = null;
+                        JSONArray newsValues = null;
+                        try {
+                              json2 = new JSONObject(response);
+                            //status = json2.getString("status");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                            JSONArray school = null;
+                            try {
+                                newsValues = json2.getJSONArray("value");
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                            for (int i = 0; i < newsValues.length(); i++) {
+                                JSONObject object = null;
+                                try {
+                                    //countryList[] = {};
+                                    object = newsValues.getJSONObject(i);
+                                    SimpleDateFormat sdf = new SimpleDateFormat("y-M-d'T'H:m:s.SSS", Locale.ENGLISH);
+                                    Date date = sdf.parse(object.getString("datePublished"));
+
+                                    countryList.add(object.getString("name")+"\n"+date.toString());
+
+
+                                   // Toast.makeText(getBaseContext(), date.toString(), Toast.LENGTH_SHORT).show();
+
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                } catch (ParseException e) {
+                                    e.printStackTrace();
+                                }
+
+                            }
+
+
+
+
+
                         arrayAdapter.notifyDataSetChanged();
                         simpleList.setAdapter(arrayAdapter);
-
-                    }
+                     }
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
