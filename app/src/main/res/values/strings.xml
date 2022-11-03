@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">thedailyherald</string>
-    <string name="app_name_head"><u>THE DAILY HERALD</u></string>
+    <string name="app_name_head">THE DAILY HERALD</string>
     <string name="app_bg_color">#FFEC4235</string>
     <string name="app_text_color">#FFFFFF</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

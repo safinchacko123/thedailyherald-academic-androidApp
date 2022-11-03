@@ -56,6 +56,7 @@ public class LoginActivity extends AppCompatActivity {
     public void SignIn() {
 
         Intent intent = gsc.getSignInIntent();
+        //deprecated function commended and implemented new
         //startActivityForResult(intent, 100);
         activityResultLauncher.launch(intent);
     }

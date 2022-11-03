@@ -15,6 +15,13 @@
         android:theme="@style/Theme.Thedailyherald"
         tools:targetApi="31">
         <activity
+            android:name=".NewsListView"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name=".NewsListingActivity"
             android:exported="false">
             <meta-data
@@ -41,6 +48,16 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
+
+        <meta-data
+            android:name="RAPID_API_KEY_VALUE"
+            android:value="8a13e7d2d4msh914d61b12bb5b6bp19f258jsn1e5059e69ede" />
+        <meta-data
+            android:name="RAPID_API_HOST_VALUE"
+            android:value="bing-news-search1.p.rapidapi.com" />
+        <meta-data
+            android:name="RAPID_API_BASE_URL"
+            android:value="https://bing-news-search1.p.rapidapi.com/" />
     </application>
 
 </manifest>
