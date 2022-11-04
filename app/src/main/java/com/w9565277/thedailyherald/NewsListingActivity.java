@@ -5,7 +5,12 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Typeface;
 import android.os.Bundle;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.RelativeSizeSpan;
+import android.text.style.StyleSpan;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -38,12 +43,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -56,7 +61,8 @@ public class NewsListingActivity extends AppCompatActivity {
     GoogleSignInClient gsc;
 
     private Spinner menu_spinner;
-    private static final String[] paths = {"Category","Sports", "Fashion", "Politics","International"};
+    private static final String[] paths = {"Category", "Sports", "Fashion", "Politics", "International"};
+
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,17 +91,9 @@ public class NewsListingActivity extends AppCompatActivity {
             }
         });
 
-
-//        ListView simpleList;
-//        String countryList[] = {"India", "China", "australia", "Portugle", "America", "NewZealand"};
-//        simpleList = (ListView)findViewById(R.id.simpleListView);
-//        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, R.layout.activity_news_list_view, R.id.textView2, countryList);
-//        simpleList.setAdapter(arrayAdapter);
-
-        ;
-        menu_spinner = (Spinner)findViewById(R.id.menu_spinner);
-        ArrayAdapter<String>adapter = new ArrayAdapter<String>(NewsListingActivity.this,
-                android.R.layout.simple_spinner_item,paths);
+        menu_spinner = (Spinner) findViewById(R.id.menu_spinner);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(NewsListingActivity.this,
+                android.R.layout.simple_spinner_item, paths);
 
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         menu_spinner.setAdapter(adapter);
@@ -106,7 +104,7 @@ public class NewsListingActivity extends AppCompatActivity {
                     @Override
                     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                         news_category = String.valueOf(adapterView.getItemAtPosition(i));
-                         Toast.makeText(getBaseContext(),news_category, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getBaseContext(), news_category, Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
@@ -141,7 +139,7 @@ public class NewsListingActivity extends AppCompatActivity {
 
     private void loadData() {
 
-       String BASE_URL = getMetadata(getApplicationContext(),"RAPID_API_BASE_URL");
+        String BASE_URL = getMetadata(getApplicationContext(), "RAPID_API_BASE_URL");
         RequestQueue queue = Volley.newRequestQueue(this);
         String url = BASE_URL + "news?safeSearch=Off&textFormat=Raw";
 
@@ -150,56 +148,53 @@ public class NewsListingActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(String response) {
                         Log.d("worked", response);
-                        ListView simpleList;
-                        //String countryList[] = {"India", "China", "australia", "Portugle", "America", "NewZealand"};
-                        ArrayList<String> countryList = new ArrayList<String>();
+                        ListView newslistview;
 
-                        simpleList = (ListView)findViewById(R.id.simpleListView);
-                        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.activity_news_list_view, R.id.textView2, countryList);
+                        ArrayList<NewsListSubjectData> newsList = new ArrayList<NewsListSubjectData>();
+
+                        newslistview = (ListView) findViewById(R.id.newslist);
                         String status = null;
                         JSONObject json2 = null;
                         JSONArray newsValues = null;
+
+
                         try {
-                              json2 = new JSONObject(response);
-                            //status = json2.getString("status");
+                            json2 = new JSONObject(response);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
 
-                            JSONArray school = null;
+                        JSONArray school = null;
+                        try {
+                            newsValues = json2.getJSONArray("value");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        for (int i = 0; i < newsValues.length(); i++) {
+                            JSONObject object = null;
                             try {
-                                newsValues = json2.getJSONArray("value");
+                                object = newsValues.getJSONObject(i);
+                                SimpleDateFormat sdf = new SimpleDateFormat("y-M-d'T'H:m:s.SSS", Locale.ENGLISH);
+                                Date date = sdf.parse(object.getString("datePublished"));
+                                String image = object.getJSONObject("image").getJSONObject("thumbnail").getString("contentUrl");
+                                int imageWidth = object.getJSONObject("image").getJSONObject("thumbnail").getInt("width");
+                                int imageHeight = object.getJSONObject("image").getJSONObject("thumbnail").getInt("height");
+                                String dateVal = date.toString();
+
+                                newsList.add(new NewsListSubjectData(object.getString("name") + "<br/><font weight='1dp'><i>" + dateVal+"</i></font>", image.toString(), imageWidth, imageHeight));
+
                             } catch (JSONException e) {
                                 e.printStackTrace();
-                            }
-                            for (int i = 0; i < newsValues.length(); i++) {
-                                JSONObject object = null;
-                                try {
-                                    //countryList[] = {};
-                                    object = newsValues.getJSONObject(i);
-                                    SimpleDateFormat sdf = new SimpleDateFormat("y-M-d'T'H:m:s.SSS", Locale.ENGLISH);
-                                    Date date = sdf.parse(object.getString("datePublished"));
-
-                                    countryList.add(object.getString("name")+"\n"+date.toString());
-
-
-                                   // Toast.makeText(getBaseContext(), date.toString(), Toast.LENGTH_SHORT).show();
-
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                } catch (ParseException e) {
-                                    e.printStackTrace();
-                                }
-
+                            } catch (ParseException e) {
+                                e.printStackTrace();
                             }
 
+                        }
+                        NewsListAdapter newsListAdapter = new NewsListAdapter(getApplicationContext(), newsList);
 
-
-
-
-                        arrayAdapter.notifyDataSetChanged();
-                        simpleList.setAdapter(arrayAdapter);
-                     }
+                        //  newsListAdapter.updateNewsList(newsList);
+                        newslistview.setAdapter(newsListAdapter);
+                    }
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
@@ -224,23 +219,13 @@ public class NewsListingActivity extends AppCompatActivity {
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<String, String>();
-//            params.put("User", UserName);
-//            params.put("Pass", PassWord);
+
                 return params;
             }
         };
         queue.add(stringRequest);
     }
 
-    public void loadData(View view) {
-//        TextView menu_trending = (TextView) findViewById(R.id.menu_trending);
-//        menu_trending.setOnClickListener(new View.OnClickListener() {
-//            public void onClick(View v) {
-//                testApi();
-//                Toast.makeText(getBaseContext(), "Your answer is correct!", Toast.LENGTH_SHORT).show();
-//            }
-//        });
-    }
 
     public static String getMetadata(Context context, String key) {
         try {
@@ -255,7 +240,7 @@ public class NewsListingActivity extends AppCompatActivity {
     }
 
 
-     public void onItemSelected(AdapterView<?> parent, View v, int position, long id) {
+    public void onItemSelected(AdapterView<?> parent, View v, int position, long id) {
 
         switch (position) {
             case 0:
@@ -271,7 +256,7 @@ public class NewsListingActivity extends AppCompatActivity {
         }
     }
 
-     public void onNothingSelected(AdapterView<?> parent) {
+    public void onNothingSelected(AdapterView<?> parent) {
         // TODO Auto-generated method stub
     }
 }
