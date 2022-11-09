@@ -1,21 +1,37 @@
 package com.w9565277.thedailyherald;
 
+import static androidx.core.content.ContextCompat.startActivity;
+
+import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.DataSetObserver;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.text.HtmlCompat;
 
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-public class NewsListAdapter implements ListAdapter{
+import java.util.ArrayList;
+import java.util.Map;
+
+public class NewsListAdapter implements ListAdapter {
     ArrayList<NewsListSubjectData> arrayList;
     Context context;
 
@@ -48,8 +64,8 @@ public class NewsListAdapter implements ListAdapter{
     }
 
     @Override
-    public Object getItem(int position) {
-        return position;
+    public NewsListSubjectData getItem(int position) {
+        return arrayList.get(position);
     }
 
     @Override
@@ -68,17 +84,32 @@ public class NewsListAdapter implements ListAdapter{
         if (convertView == null) {
             LayoutInflater layoutInflater = LayoutInflater.from(context);
             convertView = layoutInflater.inflate(R.layout.activity_news_list_view, null);
+
+
             convertView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+
+                    NewsListSubjectData item = getItem(position);
+                    String url = item.NewsUrl;
+
+                    Uri uri = Uri.parse(url);
+                    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    context.startActivity(intent);
+
                 }
+
+
             });
+
+
             TextView tittle = convertView.findViewById(R.id.item_head);
             ImageView imag = convertView.findViewById(R.id.item_image);
-          // imag.getLayoutParams().width= 500;//subjectData.ImageWidth;
-           // imag.getLayoutParams().height= 375;//subjectData.ImageHeight;
+            // imag.getLayoutParams().width= 500;//subjectData.ImageWidth;
+            // imag.getLayoutParams().height= 375;//subjectData.ImageHeight;
             //imag.getLayoutParams().height= subjectData.ImageHeight;
-           // imag.getLayoutParams().width= subjectData.ImageWidth;
+            // imag.getLayoutParams().width= subjectData.ImageWidth;
             tittle.setText(HtmlCompat.fromHtml(subjectData.SubjectName, HtmlCompat.FROM_HTML_MODE_LEGACY));
             //tittle.setText(subjectData.SubjectName);
             Picasso.with(context)
@@ -104,8 +135,10 @@ public class NewsListAdapter implements ListAdapter{
         return false;
     }
 
-     public void updateNewsList(ArrayList<NewsListSubjectData> newsList) {
-       // arrayList.clear();
-       // arrayList.addAll(newsList);
+    public void updateNewsList(ArrayList<NewsListSubjectData> newsList) {
+        // arrayList.clear();
+        // arrayList.addAll(newsList);
     }
+
+
 }

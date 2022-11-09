@@ -59,6 +59,8 @@
         android:layout_below="@id/menu_layout"
         android:divider="@color/theme_txt_white"
         android:dividerHeight="2dp"
+        android:scrollingCache="false"
+        android:smoothScrollbar="true"
         />
 
 

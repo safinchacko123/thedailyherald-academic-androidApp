@@ -1,16 +1,26 @@
 package com.w9565277.thedailyherald;
 
+import static androidx.core.content.ContextCompat.startActivity;
+
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -62,10 +72,12 @@ public class NewsListingActivity extends AppCompatActivity {
 
     private Spinner menu_spinner;
     private static final String[] paths = {"Category", "Sports", "Fashion", "Politics", "International"};
+    private ListView listview;
 
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_news_listing);
@@ -74,9 +86,9 @@ public class NewsListingActivity extends AppCompatActivity {
         logout = findViewById(R.id.logout);
 
 
+        /**Google Sign in**/
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
         gsc = GoogleSignIn.getClient(this, gso);
-
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
         if (account != null) {
             String Name = account.getDisplayName();
@@ -91,10 +103,10 @@ public class NewsListingActivity extends AppCompatActivity {
             }
         });
 
+        /**Dropdown**/
         menu_spinner = (Spinner) findViewById(R.id.menu_spinner);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(NewsListingActivity.this,
                 android.R.layout.simple_spinner_item, paths);
-
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         menu_spinner.setAdapter(adapter);
         menu_spinner.setOnItemSelectedListener(
@@ -124,7 +136,31 @@ public class NewsListingActivity extends AppCompatActivity {
             }
         });
 
+
+//        ArrayList<NewsListSubjectData> newsList = new ArrayList<NewsListSubjectData>();
+//        ListView newslistview = (ListView) findViewById(R.id.newslist);
+//        newsList.add(new NewsListSubjectData("News" + "<br/><font weight='1dp'><i>000</i></font>", "http://test.com", 100,100));
+//
+//        NewsListAdapter newsListAdapter = new NewsListAdapter(getApplicationContext(), newsList);
+//
+//        newslistview.setAdapter(newsListAdapter);
+//
+//        newslistview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                //String[] links = getResources().getStringArray(R.array.link);
+//                Uri uri = Uri.parse("http://yahoo.com");
+//                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+//                startActivity(intent);
+//
+//            }
+//
+//        });
+
+
         loadData();
+
+
     }
 
     private void SignOut() {
@@ -147,7 +183,7 @@ public class NewsListingActivity extends AppCompatActivity {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        Log.d("worked", response);
+                       // Log.d("worked", response);
                         ListView newslistview;
 
                         ArrayList<NewsListSubjectData> newsList = new ArrayList<NewsListSubjectData>();
@@ -181,7 +217,7 @@ public class NewsListingActivity extends AppCompatActivity {
                                 int imageHeight = object.getJSONObject("image").getJSONObject("thumbnail").getInt("height");
                                 String dateVal = date.toString();
 
-                                newsList.add(new NewsListSubjectData(object.getString("name") + "<br/><font weight='1dp'><i>" + dateVal+"</i></font>", image.toString(), imageWidth, imageHeight));
+                                newsList.add(new NewsListSubjectData(object.getString("name") + "<br/><font weight='1dp'><i>" + dateVal + "</i></font>", image.toString(), imageWidth, imageHeight,object.getString("url")));
 
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -191,9 +227,8 @@ public class NewsListingActivity extends AppCompatActivity {
 
                         }
                         NewsListAdapter newsListAdapter = new NewsListAdapter(getApplicationContext(), newsList);
-
-                        //  newsListAdapter.updateNewsList(newsList);
                         newslistview.setAdapter(newsListAdapter);
+
                     }
                 }, new Response.ErrorListener() {
             @Override
@@ -259,4 +294,6 @@ public class NewsListingActivity extends AppCompatActivity {
     public void onNothingSelected(AdapterView<?> parent) {
         // TODO Auto-generated method stub
     }
+
+
 }
