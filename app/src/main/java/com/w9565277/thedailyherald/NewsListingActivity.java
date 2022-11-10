@@ -71,7 +71,7 @@ public class NewsListingActivity extends AppCompatActivity {
     GoogleSignInClient gsc;
 
     private Spinner menu_spinner;
-    private static final String[] paths = {"Category", "Sports", "Fashion", "Politics", "International"};
+    private static final String[] paths = {"-Select Topic-", "Sports", "Fashion", "Politics", "International"};
     private ListView listview;
 
     @SuppressLint("MissingInflatedId")

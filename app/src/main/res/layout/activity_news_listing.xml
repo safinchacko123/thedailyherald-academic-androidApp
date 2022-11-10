@@ -21,7 +21,8 @@
         android:layout_height="100dp"
         android:layout_marginLeft="0dp"
         android:layout_marginTop="0dp"
-        android:layout_marginRight="0dp" />
+        android:layout_marginRight="0dp"
+            />
 
 
     <LinearLayout
@@ -43,8 +44,8 @@
 
         <Spinner
             android:id="@+id/menu_spinner"
-            android:layout_width="0dp"
-            android:layout_height="30dp"
+            android:layout_width="5dp"
+            android:layout_height="20dp"
             android:layout_marginTop="0dp"
             android:layout_weight=".50"
             android:textColor="@color/theme_bg_dark_red"
