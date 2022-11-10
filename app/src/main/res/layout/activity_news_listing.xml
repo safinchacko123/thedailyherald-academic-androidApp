@@ -47,7 +47,9 @@
             android:layout_height="30dp"
             android:layout_marginTop="0dp"
             android:layout_weight=".50"
-            android:textColor="@color/theme_bg_dark_red" />
+            android:textColor="@color/theme_bg_dark_red"
+            android:theme="@style/mySpinnerItemStyle"
+            />
 
     </LinearLayout>
 
@@ -60,9 +62,7 @@
         android:divider="@color/theme_txt_white"
         android:dividerHeight="2dp"
         android:scrollingCache="false"
-        android:smoothScrollbar="true"
-        />
-
+        android:smoothScrollbar="true" />
 
 
     <LinearLayout
@@ -83,8 +83,7 @@
             android:layout_gravity="center"
             android:gravity="center"
             android:text="Email"
-            android:textSize="20dp"
-            />
+            android:textSize="20dp" />
 
 
         <Button
