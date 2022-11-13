@@ -49,6 +49,4 @@
         android:textAlignment="textEnd"
         android:textColor="@color/theme_txt_white" />
 
-
-
 </LinearLayout>

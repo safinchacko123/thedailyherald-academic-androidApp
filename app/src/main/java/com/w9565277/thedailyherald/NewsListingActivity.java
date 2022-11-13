@@ -3,12 +3,15 @@ package com.w9565277.thedailyherald;
 import static androidx.core.content.ContextCompat.startActivity;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.net.Uri;
@@ -17,6 +20,7 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
+import android.view.MenuItem;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -48,6 +52,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.material.navigation.NavigationView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -61,8 +66,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 
-public class NewsListingActivity extends AppCompatActivity {
+public class NewsListingActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     TextView name, email;
     Button logout;
@@ -74,6 +80,9 @@ public class NewsListingActivity extends AppCompatActivity {
     private static final String[] paths = {"-Select Topic-", "Sports", "Fashion", "Politics", "International"};
     private ListView listview;
 
+    public DrawerLayout drawerLayout;
+    public ActionBarDrawerToggle actionBarDrawerToggle;
+
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,8 +91,8 @@ public class NewsListingActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_news_listing);
         name = findViewById(R.id.user_name);
-        email = findViewById(R.id.email);
-        logout = findViewById(R.id.logout);
+        //email = findViewById(R.id.email);
+        //logout = findViewById(R.id.logout);
 
 
         /**Google Sign in**/
@@ -94,38 +103,42 @@ public class NewsListingActivity extends AppCompatActivity {
             String Name = account.getDisplayName();
             String Email = account.getEmail();
             name.setText(Name);
-            email.setText(Email);
+            //email.setText(Email);
+
+            // Storing data into SharedPreferences
+            SharedPreferences sharedPreferences = getSharedPreferences("heraldNewsData", MODE_PRIVATE);
+            SharedPreferences.Editor editDataHerald = sharedPreferences.edit();
+            editDataHerald.putString("email", Email);
+            editDataHerald.putString("name", Name);
+            editDataHerald.commit();
         }
-        logout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                SignOut();
-            }
-        });
+//        logout.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                SignOut();
+//            }
+//        });
 
         /**Dropdown**/
         menu_spinner = (Spinner) findViewById(R.id.menu_spinner);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(NewsListingActivity.this,
-                android.R.layout.simple_spinner_item, paths);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(NewsListingActivity.this, android.R.layout.simple_spinner_item, paths);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         menu_spinner.setAdapter(adapter);
-        menu_spinner.setOnItemSelectedListener(
-                new AdapterView.OnItemSelectedListener() {
-                    String news_category;
+        menu_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            String news_category;
 
-                    @Override
-                    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                        news_category = String.valueOf(adapterView.getItemAtPosition(i));
-                        Toast.makeText(getBaseContext(), news_category, Toast.LENGTH_SHORT).show();
-                    }
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                news_category = String.valueOf(adapterView.getItemAtPosition(i));
+                Toast.makeText(getBaseContext(), news_category, Toast.LENGTH_SHORT).show();
+            }
 
-                    @Override
-                    public void onNothingSelected(AdapterView<?> adapterView) {
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
 
-                    }
+            }
 
-                }
-        );
+        });
 
 
         TextView menu_trending = (TextView) findViewById(R.id.menu_trending);
@@ -161,12 +174,45 @@ public class NewsListingActivity extends AppCompatActivity {
         loadData();
 
 
+        drawerLayout = findViewById(R.id.my_drawer_layout);
+        actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.nav_open, R.string.nav_close);
+
+        // pass the Open and Close toggle for the drawer layout listener
+        // to toggle the button
+        drawerLayout.addDrawerListener(actionBarDrawerToggle);
+        actionBarDrawerToggle.syncState();
+
+        // to make the Navigation drawer icon always appear on the action bar
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+
+
+        NavigationView mNavigationView = (NavigationView) findViewById(R.id.nav_view);
+
+        if (mNavigationView != null) {
+            mNavigationView.setNavigationItemSelectedListener(this);
+        }
+
     }
 
     private void SignOut() {
         gsc.signOut().addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
+
+                // Storing data into SharedPreferences
+                SharedPreferences sharedPreferences = getSharedPreferences("heraldNewsData", MODE_PRIVATE);
+
+// Creating an Editor object to edit(write to the file)
+                SharedPreferences.Editor editDataHerald = sharedPreferences.edit();
+
+// Storing the key and its value as the data fetched from edittext
+                editDataHerald.putString("email", "");
+                editDataHerald.putString("name", "");
+
+// Once the changes have been made,
+// we need to commit to apply those changes made,
+// otherwise, it will throw an error
+                editDataHerald.commit();
                 finish();
                 startActivity(new Intent(getApplicationContext(), LoginActivity.class));
             }
@@ -179,58 +225,57 @@ public class NewsListingActivity extends AppCompatActivity {
         RequestQueue queue = Volley.newRequestQueue(this);
         String url = BASE_URL + "news?safeSearch=Off&textFormat=Raw";
 
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                       // Log.d("worked", response);
-                        ListView newslistview;
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                // Log.d("worked", response);
+                ListView newslistview;
 
-                        ArrayList<NewsListSubjectData> newsList = new ArrayList<NewsListSubjectData>();
+                ArrayList<NewsListSubjectData> newsList = new ArrayList<NewsListSubjectData>();
 
-                        newslistview = (ListView) findViewById(R.id.newslist);
-                        String status = null;
-                        JSONObject json2 = null;
-                        JSONArray newsValues = null;
+                newslistview = (ListView) findViewById(R.id.newslist);
+                String status = null;
+                JSONObject json2 = null;
+                JSONArray newsValues = null;
 
 
-                        try {
-                            json2 = new JSONObject(response);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+                try {
+                    json2 = new JSONObject(response);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
 
-                        JSONArray school = null;
-                        try {
-                            newsValues = json2.getJSONArray("value");
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                        for (int i = 0; i < newsValues.length(); i++) {
-                            JSONObject object = null;
-                            try {
-                                object = newsValues.getJSONObject(i);
-                                SimpleDateFormat sdf = new SimpleDateFormat("y-M-d'T'H:m:s.SSS", Locale.ENGLISH);
-                                Date date = sdf.parse(object.getString("datePublished"));
-                                String image = object.getJSONObject("image").getJSONObject("thumbnail").getString("contentUrl");
-                                int imageWidth = object.getJSONObject("image").getJSONObject("thumbnail").getInt("width");
-                                int imageHeight = object.getJSONObject("image").getJSONObject("thumbnail").getInt("height");
-                                String dateVal = date.toString();
+                JSONArray school = null;
+                try {
+                    newsValues = json2.getJSONArray("value");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                for (int i = 0; i < newsValues.length(); i++) {
+                    JSONObject object = null;
+                    try {
+                        object = newsValues.getJSONObject(i);
+                        SimpleDateFormat sdf = new SimpleDateFormat("y-M-d'T'H:m:s.SSS", Locale.ENGLISH);
+                        Date date = sdf.parse(object.getString("datePublished"));
+                        String image = object.getJSONObject("image").getJSONObject("thumbnail").getString("contentUrl");
+                        int imageWidth = object.getJSONObject("image").getJSONObject("thumbnail").getInt("width");
+                        int imageHeight = object.getJSONObject("image").getJSONObject("thumbnail").getInt("height");
+                        String dateVal = date.toString();
 
-                                newsList.add(new NewsListSubjectData(object.getString("name") + "<br/><font weight='1dp'><i>" + dateVal + "</i></font>", image.toString(), imageWidth, imageHeight,object.getString("url")));
+                        newsList.add(new NewsListSubjectData(object.getString("name") + "<br/><font weight='1dp'><i>" + dateVal + "</i></font>", image.toString(), imageWidth, imageHeight, object.getString("url")));
 
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            } catch (ParseException e) {
-                                e.printStackTrace();
-                            }
-
-                        }
-                        NewsListAdapter newsListAdapter = new NewsListAdapter(getApplicationContext(), newsList);
-                        newslistview.setAdapter(newsListAdapter);
-
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    } catch (ParseException e) {
+                        e.printStackTrace();
                     }
-                }, new Response.ErrorListener() {
+
+                }
+                NewsListAdapter newsListAdapter = new NewsListAdapter(getApplicationContext(), newsList);
+                newslistview.setAdapter(newsListAdapter);
+
+            }
+        }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.d("That didn't work!", "That didn't work!");
@@ -264,9 +309,7 @@ public class NewsListingActivity extends AppCompatActivity {
 
     public static String getMetadata(Context context, String key) {
         try {
-            Bundle metaData = context.getPackageManager()
-                    .getApplicationInfo(context.getPackageName(),
-                            PackageManager.GET_META_DATA).metaData;
+            Bundle metaData = context.getPackageManager().getApplicationInfo(context.getPackageName(), PackageManager.GET_META_DATA).metaData;
             return metaData.get(key).toString();
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
@@ -295,5 +338,22 @@ public class NewsListingActivity extends AppCompatActivity {
         // TODO Auto-generated method stub
     }
 
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
+        if (actionBarDrawerToggle.onOptionsItemSelected(item)) {
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.nav_logout) {
+            SignOut();
+        }
+        return false;
+    }
 }
