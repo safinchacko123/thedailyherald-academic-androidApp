@@ -8,11 +8,12 @@
         android:title="My Account" />
 
     <item
-        android:id="@+id/nav_settings"
-        android:title="Settings" />
+        android:id="@+id/nav_citizen_journalist"
+        android:title="Report a News" />
 
     <item
         android:id="@+id/nav_logout"
-        android:title="Logout" />
+        android:title="Logout"
+        />
 
 </menu>
