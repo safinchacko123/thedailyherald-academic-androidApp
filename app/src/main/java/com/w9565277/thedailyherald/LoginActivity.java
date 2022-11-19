@@ -79,7 +79,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void loadListingActivity() {
         finish();
-        Intent intent = new Intent(getApplicationContext(), NewsListingActivity.class);
+        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         startActivity(intent);
 
     }

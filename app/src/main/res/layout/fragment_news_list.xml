@@ -1,8 +1,102 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    tools:context=".NewsListFragment"
+    android:background="@color/theme_bg_dark_red"
     android:orientation="vertical">
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/headerfragment"
+        android:name="com.w9565277.thedailyherald.headerFragment"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginRight="0dp"
+        android:padding="5dp"
+        />
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:background="@color/theme_bg_dark_red"
+        android:padding="5dp"
+        tools:context=".NewsListFragment">
+
+
+        <LinearLayout
+            android:id="@+id/menu_layout"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:layout_gravity="left"
+            android:layout_marginTop="0dp"
+            android:background="@color/white">
+
+            <TextView
+                android:id="@+id/menu_trending"
+                android:layout_width="0dp"
+                android:layout_height="30dp"
+                android:layout_marginTop="0dp"
+                android:layout_weight=".50"
+                android:padding="5dp"
+                android:text="Trending"
+                android:textColor="@color/theme_bg_dark_red" />
+
+            <TextView
+                android:id="@+id/menu_near_me"
+                android:layout_width="0dp"
+                android:layout_height="30dp"
+                android:layout_marginTop="0dp"
+                android:layout_weight=".50"
+                android:padding="5dp"
+                android:text="Near Me"
+                android:textColor="@color/theme_bg_dark_red" />
+
+            <Spinner
+                android:id="@+id/menu_spinner"
+                android:layout_width="10dp"
+                android:layout_height="20dp"
+                android:layout_marginTop="0dp"
+                android:layout_weight=".50"
+                android:textColor="@color/theme_bg_dark_red"
+                android:theme="@style/mySpinnerItemStyle"
+
+                />
+
+        </LinearLayout>
+
+
+        <ListView
+            android:id="@+id/newslist"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/menu_layout"
+            android:divider="@color/theme_txt_white"
+            android:dividerHeight="2dp"
+            android:scrollingCache="false"
+            android:smoothScrollbar="true" />
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/newslist"
+            android:layout_alignParentBottom="true"
+            android:layout_gravity="left"
+            android:orientation="vertical"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp">
+
+
+        </LinearLayout>
+
+    </RelativeLayout>
 
 
 </LinearLayout>
