@@ -4,9 +4,9 @@
     tools:ignore="CoarseFineLocation">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
     <application
         android:allowBackup="true"
@@ -17,10 +17,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Thedailyherald"
-        tools:targetApi="31"
         android:usesCleartextTraffic="true"
-
-        >
+        tools:targetApi="31">
         <activity
             android:name=".NewsListView"
             android:exported="false">
@@ -28,13 +26,7 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
-        <activity
-            android:name=".NewsListingActivity"
-            android:exported="false">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
+
         <activity
             android:name=".LoginActivity"
             android:exported="true">
@@ -54,6 +46,8 @@
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
+
+
         </activity>
 
         <meta-data
@@ -65,7 +59,6 @@
         <meta-data
             android:name="RAPID_API_BASE_URL"
             android:value="https://bing-news-search1.p.rapidapi.com/" />
-
     </application>
 
 </manifest>
