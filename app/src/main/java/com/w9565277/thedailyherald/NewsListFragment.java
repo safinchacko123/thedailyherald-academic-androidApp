@@ -78,6 +78,7 @@ public class NewsListFragment extends Fragment {
         // Inflate the layout for this fragment
 
         //Menu Trending Default Loading
+        ((MainActivity)getActivity()).loadTrendingNews();
         final View rootView = inflater.inflate(R.layout.fragment_news_list, container, false);
          TextView menu_trending = (TextView) rootView.findViewById(R.id.menu_trending);
          if(menu_trending!=null){
