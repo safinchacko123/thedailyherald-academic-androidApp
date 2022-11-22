@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:minHeight="10dp"
+    android:padding="0dp"
+    tools:context=".headerFragment"
+    android:orientation="horizontal">
+
+
+    <ImageView
+        android:layout_width="100dp"
+        android:layout_height="40dp"
+        android:id="@+id/logo"
+        android:src="@drawable/logo5"
+        android:maxWidth="50dp"
+        android:padding="1dp"
+        android:layout_marginLeft="1dp"
+        >
+    </ImageView>
+
+<!--    <TextView-->
+<!--        android:id="@+id/textView2"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_weight="1"-->
+<!--        android:text="TextView" android:background="#f00"/>-->
+
+<!--    <TextView-->
+<!--        android:id="@+id/textView3"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_gravity="right"-->
+<!--        android:text="TextView" android:background="#f00"/>-->
+
+
+    <TextView
+        android:id="@+id/user_name"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_alignRight="@id/user_name"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_gravity="end"
+        android:layout_weight=".50"
+        android:gravity="end"
+        android:text="Username"
+        android:textAlignment="textEnd"
+        android:textColor="@color/theme_txt_white" />
+
+</LinearLayout>

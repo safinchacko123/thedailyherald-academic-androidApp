@@ -1,3 +1,12 @@
 <resources>
-    <string name="app_name">thedailyherald</string>
+    <string name="app_name">DAILY HERALD</string>
+    <string name="app_name_head">THE DAILY HERALD</string>
+    <string name="app_bg_color">#FFEC4235</string>
+    <string name="app_text_color">#FFFFFF</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+     <!-- to toggle the open close button of the navigation drawer -->
+    <string name="nav_open">Open</string>
+    <string name="nav_close">Close</string>
 </resources>
