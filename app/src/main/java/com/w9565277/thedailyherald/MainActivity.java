@@ -1,6 +1,7 @@
 package com.w9565277.thedailyherald;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -11,19 +12,23 @@ import androidx.fragment.app.FragmentTransaction;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.provider.Settings;
 import android.text.format.Formatter;
+import android.util.Base64;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -49,13 +54,18 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -67,6 +77,9 @@ import java.util.Map;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, LocationListener {
+
+    DatabaseReference databaseReference;
+    ReportedNews reportedNews;
 
     TextView name, email;
     Button logout;
@@ -82,6 +95,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     public DrawerLayout drawerLayout;
     public ActionBarDrawerToggle actionBarDrawerToggle;
+    Bitmap bitmapImage;
+    String loggedInEmail = "";
 
 
     @SuppressLint("MissingInflatedId")
@@ -112,7 +127,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (account != null) {
             String Name = account.getDisplayName();
             String Email = account.getEmail();
-           // name.setText(Name);
+            loggedInEmail = Email;
+
+            // name.setText(Name);
             //email.setText(Email);
 
             Toast.makeText(getBaseContext(), Name, Toast.LENGTH_SHORT).show();
@@ -148,7 +165,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 //        });
 
 
-
         //location
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != getPackageManager().PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{
@@ -159,10 +175,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             enableLocationOnDevice();
         }
-
-
-
-
 
 
         // loadTrendingNews();
@@ -181,6 +193,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (mNavigationView != null) {
             mNavigationView.setNavigationItemSelectedListener(this);
         }
+
+        //setup database
+        databaseReference = FirebaseDatabase.getInstance().getReference("ReportedNews");
+
     }
 
 
@@ -352,7 +368,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
 
-
         drawerLayout.closeDrawers();
         return false;
     }
@@ -449,7 +464,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             enableLocationOnDevice();
-        }else{
+        } else {
             getLastKnownLocation();
         }
     }
@@ -623,6 +638,89 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         String ip = Formatter.formatIpAddress(wifiManager.getConnectionInfo().getIpAddress());
         ipAddress = ip;
         //Toast.makeText(getBaseContext(), ipAddress, Toast.LENGTH_SHORT).show();
+
+    }
+
+    public void getCameraImage(View view) {
+        bitmapImage = null;
+        Button btnCamera = findViewById(R.id.btnCamera);
+        if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{
+                    Manifest.permission.CAMERA
+            }, 100);
+        }
+
+        btnCamera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(intent, 100);
+            }
+        });
+
+
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 100) {
+            Bitmap bitmap = (Bitmap) data.getExtras().get("data");
+            bitmapImage = bitmap;
+        }
+    }
+
+
+    public void submitReportNews(View view) throws JSONException {
+        TextView headline = (TextView) findViewById(R.id.headline);
+        TextView desc = (TextView) findViewById(R.id.desc);
+
+        String encodedImage = "";
+        String headlineValue = headline.getText().toString();
+        String descValue = desc.getText().toString();
+        if((descValue.trim()).length()!=0 && headlineValue.trim().length()!=0){
+            if (bitmapImage != null) {
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                bitmapImage.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                byte[] imageBytes = baos.toByteArray();
+                encodedImage = Base64.encodeToString(imageBytes, Base64.DEFAULT);
+            }
+
+            Long tsLong = System.currentTimeMillis() / 1000;
+            String ts = tsLong.toString();
+
+            reportedNews = new ReportedNews();
+            reportedNews.setEmail(loggedInEmail);
+            reportedNews.setHeadline(headlineValue);
+            reportedNews.setDesc(descValue);
+            reportedNews.setImage(encodedImage);
+            reportedNews.setDateTime(ts);
+            databaseReference.child(ts).setValue(reportedNews).addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void unused) {
+                    Toast.makeText(getApplicationContext(), "Success !! News Reported Successfully.", Toast.LENGTH_SHORT).show();
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(getApplicationContext(), "Failed !! News not reported.", Toast.LENGTH_SHORT).show();
+
+                }
+            }).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    //Toast.makeText(getApplicationContext(), "Success !! News Reported Successfully.", Toast.LENGTH_SHORT).show();
+                    headline.setText("");
+                    desc.setText("");
+                    bitmapImage = null;
+                }
+            });
+        }else{
+            Toast.makeText(getApplicationContext(), "Alert !! Please Enter the Details.", Toast.LENGTH_SHORT).show();
+
+        }
+
+
 
     }
 }
