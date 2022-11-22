@@ -63,9 +63,12 @@ public class MyAccountFragment extends Fragment {
 
         final View rootView = inflater.inflate(R.layout.fragment_my_account, container, false);
         TextView EmailTextView = (TextView) rootView.findViewById(R.id.emailValue);
+        TextView UsernameTextView = (TextView) rootView.findViewById(R.id.username);
         SharedPreferences pref = getActivity().getSharedPreferences("heraldNewsData", Context.MODE_PRIVATE);
         String email = pref.getString("email", "");
+        String username = pref.getString("name", "");
         EmailTextView.setText(email);
+        UsernameTextView.setText(username);
         return rootView;
     }
 }

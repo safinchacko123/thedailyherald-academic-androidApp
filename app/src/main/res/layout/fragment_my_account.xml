@@ -4,9 +4,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/theme_bg_dark_red"
-    android:orientation="horizontal"
+    android:orientation="vertical"
     android:padding="10dp"
     tools:context=".MyAccountFragment">
+
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/headerfragment"
@@ -17,53 +18,51 @@
         android:layout_marginTop="0dp"
         android:layout_marginRight="0dp"
         android:padding="5dp"
-        />
+        tools:layout="@layout/fragment_header" />
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="20dp">
 
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.25"
+            android:text="Email"
+            android:textColor="@color/theme_txt_white"/>
 
-            <TextView
-                android:id="@+id/emailValue"
-                android:layout_width="50dp"
-                android:layout_height="match_parent"
-                android:layout_alignRight="@id/emailValue"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:layout_gravity="end"
-                android:layout_weight=".50"
-                android:gravity="end"
-                android:text="Email"
-                android:textAlignment="textEnd"
-                android:textColor="@color/theme_txt_white" />
-    </RelativeLayout>
+        <TextView
+            android:id="@+id/emailValue"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.75"
+            android:ems="10"
+            android:textColor="@color/theme_txt_white"/>
+    </LinearLayout>
 
-<!--    <RelativeLayout-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="match_parent"-->
-<!--        android:layout_marginTop="25dp">-->
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="20dp">
 
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.25"
+            android:text="Name"
+            android:textColor="@color/theme_txt_white"/>
 
-<!--        <TextView-->
-<!--            android:id="@+id/emailLabel"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginTop="10dp"-->
-<!--            android:layout_weight="1"-->
-<!--            android:text="Email "-->
-<!--            android:textColor="@color/theme_txt_white"-->
-<!--            android:visibility="visible" />-->
+        <TextView
+            android:id="@+id/username"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.75"
+            android:ems="10"
+            android:textColor="@color/theme_txt_white"/>
+    </LinearLayout>
 
-<!--        <TextView-->
-<!--            android:id="@+id/emailValue"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginTop="10dip"-->
-<!--            android:layout_weight="1"-->
-<!--            android:text=""-->
-<!--            android:textColor="@color/theme_txt_white"-->
-<!--            android:visibility="visible" />-->
-<!--    </RelativeLayout>-->
 </LinearLayout>
 

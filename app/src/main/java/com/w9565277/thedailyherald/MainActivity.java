@@ -132,7 +132,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             // name.setText(Name);
             //email.setText(Email);
 
-            Toast.makeText(getBaseContext(), Name, Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getBaseContext(), Name, Toast.LENGTH_SHORT).show();
 
 
             // Storing data into SharedPreferences
