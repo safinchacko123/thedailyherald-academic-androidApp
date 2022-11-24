@@ -6,9 +6,12 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,7 +32,6 @@ import android.widget.TextView;
  * create an instance of this fragment.
  */
 public class NewsListFragment extends Fragment {
-
 
 
     // TODO: Rename parameter arguments, choose names that match
@@ -76,27 +78,42 @@ public class NewsListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        final View rootView = inflater.inflate(R.layout.fragment_news_list, container, false);
+
+        //Search box
+        EditText searchtxt = (EditText) rootView.findViewById(R.id.searchtxt);
+        searchtxt.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                    ((MainActivity) getActivity()).searchNewsbyTopic();
+                    return true;
+                }
+                return false;
+            }
+        });
 
         //Menu Trending Default Loading
-        ((MainActivity)getActivity()).loadTrendingNews();
-        final View rootView = inflater.inflate(R.layout.fragment_news_list, container, false);
-         TextView menu_trending = (TextView) rootView.findViewById(R.id.menu_trending);
-         if(menu_trending!=null){
+        ((MainActivity) getActivity()).loadTrendingNews();
+        TextView menu_trending = (TextView) rootView.findViewById(R.id.menu_trending);
+        if (menu_trending != null) {
             menu_trending.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
+                    searchtxt.setText("");
                     Toast.makeText(getContext(), "Trending News Loaded !", Toast.LENGTH_SHORT).show();
-                     ((MainActivity)getActivity()).loadTrendingNews();
+                    ((MainActivity) getActivity()).loadTrendingNews();
 
                 }
             });
         }
 
-         TextView menu_near_me = (TextView) rootView.findViewById(R.id.menu_near_me);
-
-        if(menu_near_me!=null){
+        //location based near me
+        TextView menu_near_me = (TextView) rootView.findViewById(R.id.menu_near_me);
+        if (menu_near_me != null) {
             menu_near_me.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
-                    ((MainActivity)getActivity()).getLocation();
+                    searchtxt.setText("");
+                    ((MainActivity) getActivity()).getLocation();
                 }
             });
         }

@@ -23,6 +23,7 @@ import android.graphics.Bitmap;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -30,13 +31,16 @@ import android.provider.Settings;
 import android.text.format.Formatter;
 import android.util.Base64;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -116,9 +120,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
         name = findViewById(R.id.user_name);
-        //email = findViewById(R.id.email);
-        //logout = findViewById(R.id.logout);
-
 
         /**Google Sign in**/
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
@@ -129,12 +130,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             String Email = account.getEmail();
             loggedInEmail = Email;
 
-            // name.setText(Name);
-            //email.setText(Email);
-
-            //Toast.makeText(getBaseContext(), Name, Toast.LENGTH_SHORT).show();
-
-
             // Storing data into SharedPreferences
             SharedPreferences sharedPreferences = getSharedPreferences("heraldNewsData", MODE_PRIVATE);
             SharedPreferences.Editor editDataHerald = sharedPreferences.edit();
@@ -142,28 +137,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             editDataHerald.putString("name", Name);
             editDataHerald.commit();
         }
-
-        /**Dropdown**/
-//        menu_spinner = (Spinner) findViewById(R.id.menu_spinner);
-//        ArrayAdapter<String> adapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_spinner_item, paths);
-//        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//        menu_spinner.setAdapter(adapter);
-//        menu_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-//            String news_category;
-//
-//            @Override
-//            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-//                news_category = String.valueOf(adapterView.getItemAtPosition(i));
-//                Toast.makeText(getBaseContext(), news_category, Toast.LENGTH_SHORT).show();
-//            }
-//
-//            @Override
-//            public void onNothingSelected(AdapterView<?> adapterView) {
-//
-//            }
-//
-//        });
-
 
         //location
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != getPackageManager().PERMISSION_GRANTED) {
@@ -175,10 +148,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             enableLocationOnDevice();
         }
-
-
-        // loadTrendingNews();
-
 
         drawerLayout = findViewById(R.id.my_drawer_layout);
         actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.nav_open, R.string.nav_close);
@@ -678,7 +647,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         String encodedImage = "";
         String headlineValue = headline.getText().toString();
         String descValue = desc.getText().toString();
-        if((descValue.trim()).length()!=0 && headlineValue.trim().length()!=0){
+        if ((descValue.trim()).length() != 0 && headlineValue.trim().length() != 0) {
             if (bitmapImage != null) {
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 bitmapImage.compress(Bitmap.CompressFormat.JPEG, 100, baos);
@@ -715,12 +684,113 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     bitmapImage = null;
                 }
             });
-        }else{
+        } else {
             Toast.makeText(getApplicationContext(), "Alert !! Please Enter the Details.", Toast.LENGTH_SHORT).show();
 
         }
-
-
-
     }
+
+
+    //Search news
+    public void searchNewsbyTopic() {
+
+        String BASE_URL = getMetadata(getApplicationContext(), "RAPID_API_BASE_URL");
+        RequestQueue queue = Volley.newRequestQueue(this);
+        EditText searchTextBox = (EditText) findViewById(R.id.searchtxt);
+        String searchText = String.valueOf(searchTextBox.getText());
+
+        if ((searchText.trim()).length() == 0) {
+            Toast.makeText(this, "Please enter search text", Toast.LENGTH_SHORT).show();
+        } else {
+            String url = Uri.parse(BASE_URL + "news/search")
+                    .buildUpon()
+                    .appendQueryParameter("q", searchText)
+                    .appendQueryParameter("freshness", "Month")
+                    .appendQueryParameter("textFormat", "Raw")
+                    .appendQueryParameter("safeSearch", "Off")
+                    .build().toString();
+
+            StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    ListView newslistview;
+                    ArrayList<NewsListSubjectData> newsList = new ArrayList<NewsListSubjectData>();
+                    newslistview = (ListView) findViewById(R.id.newslist);
+                    newsList.clear();
+                    String status = null;
+                    JSONObject json2 = null;
+                    JSONArray newsValues = null;
+
+                    try {
+                        json2 = new JSONObject(response);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    JSONArray school = null;
+                    try {
+                        newsValues = json2.getJSONArray("value");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    if (newsValues.length() > 0) {
+                        for (int i = 0; i < newsValues.length(); i++) {
+                            JSONObject object = null;
+                            try {
+                                object = newsValues.getJSONObject(i);
+                                SimpleDateFormat sdf = new SimpleDateFormat("y-M-d'T'H:m:s.SSS", Locale.ENGLISH);
+                                Date date = sdf.parse(object.getString("datePublished"));
+                                String image = object.getJSONObject("image").getJSONObject("thumbnail").getString("contentUrl");
+                                int imageWidth = object.getJSONObject("image").getJSONObject("thumbnail").getInt("width");
+                                int imageHeight = object.getJSONObject("image").getJSONObject("thumbnail").getInt("height");
+                                String dateVal = date.toString();
+
+                                newsList.add(new NewsListSubjectData(object.getString("name") + "<br/><font weight='1dp'><i>" + dateVal + "</i></font>", image.toString(), imageWidth, imageHeight, object.getString("url")));
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+
+                        }
+
+                    } else {
+                        newsList.clear();
+                        Toast.makeText(MainActivity.this, "Sorry !! No news available for the topic.", Toast.LENGTH_SHORT).show();
+                    }
+                    NewsListAdapter newsListAdapter = new NewsListAdapter(getApplicationContext(), newsList);
+                    newslistview.setAdapter(newsListAdapter);
+
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.d("That didn't work!", "That didn't work!");
+                }
+            }) {
+
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    Map<String, String> params = new HashMap<String, String>();
+                    params.put("Content-Type", "application/json; charset=UTF-8");
+                    params.put("X-Rapidapi-Key", getMetadata(getApplicationContext(), "RAPID_API_KEY"));
+                    params.put("X-Bingapis-Sdk", "true");
+                    params.put("X-Rapidapi-Host", getMetadata(getApplicationContext(), "RAPID_API_HOST"));
+
+                    return params;
+                }
+
+                //Pass Your Parameters here
+                @Override
+                protected Map<String, String> getParams() {
+                    Map<String, String> params = new HashMap<String, String>();
+
+                    return params;
+                }
+            };
+            queue.add(stringRequest);
+        }
+    }
+
 }
