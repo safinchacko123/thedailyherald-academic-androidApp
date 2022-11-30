@@ -357,13 +357,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void onLocationChanged(@NonNull Location location) {
-        Toast.makeText(this, "Location : " + location.getLatitude(), Toast.LENGTH_SHORT).show();
+       // Toast.makeText(this, "Location : " + location.getLatitude(), Toast.LENGTH_SHORT).show();
     }
 
 
     @Override
     public void onLocationChanged(@NonNull List<Location> locations) {
-        Toast.makeText(this, "Location changed ", Toast.LENGTH_SHORT).show();
+      //  Toast.makeText(this, "Location changed ", Toast.LENGTH_SHORT).show();
         LocationListener.super.onLocationChanged(locations);
     }
 
@@ -438,7 +438,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         String url = BASE_URL + "news?safeSearch=Off&textFormat=Raw";
         getIPAddress();
 
-        Toast.makeText(this, "" + lat + " " + longi, Toast.LENGTH_LONG).show();
+       // Toast.makeText(this, "" + lat + " " + longi, Toast.LENGTH_LONG).show();
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
@@ -610,7 +610,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
-                    Toast.makeText(getApplicationContext(), "Failed !! News not reported.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Failed !! Error Occurred. Please Try Again.", Toast.LENGTH_SHORT).show();
 
                 }
             }).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -623,7 +623,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
             });
         } else {
-            Toast.makeText(getApplicationContext(), "Alert !! Please Enter the Details.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Invalid Entry !! Please Enter the Details.", Toast.LENGTH_SHORT).show();
 
         }
     }
