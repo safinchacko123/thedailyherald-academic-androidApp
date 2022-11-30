@@ -99,6 +99,8 @@ public class NewsListFragment extends Fragment {
         //Menu Trending Default Loading
         ((MainActivity) getActivity()).loadTrendingNews();
         TextView menu_trending = (TextView) rootView.findViewById(R.id.menu_trending);
+        menuSetNormal(rootView);
+        menuSetBold(menu_trending);
         if (menu_trending != null) {
             menu_trending.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
