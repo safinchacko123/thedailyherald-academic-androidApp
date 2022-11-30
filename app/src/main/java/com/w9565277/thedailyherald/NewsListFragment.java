@@ -1,6 +1,7 @@
 package com.w9565277.thedailyherald;
 
 import android.annotation.SuppressLint;
+import android.graphics.Typeface;
 import android.location.LocationManager;
 import android.os.Bundle;
 
@@ -86,6 +87,8 @@ public class NewsListFragment extends Fragment {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                    menuSetNormal(rootView);
+                    searchSetBold(searchtxt);
                     ((MainActivity) getActivity()).searchNewsbyTopic();
                     return true;
                 }
@@ -100,6 +103,8 @@ public class NewsListFragment extends Fragment {
             menu_trending.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     searchtxt.setText("");
+                    menuSetNormal(rootView);
+                    menuSetBold(menu_trending);
                     Toast.makeText(getContext(), "Trending News Loaded !", Toast.LENGTH_SHORT).show();
                     ((MainActivity) getActivity()).loadTrendingNews();
 
@@ -113,6 +118,8 @@ public class NewsListFragment extends Fragment {
             menu_near_me.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     searchtxt.setText("");
+                    menuSetNormal(rootView);
+                    menuSetBold(menu_near_me);
                     ((MainActivity) getActivity()).getLocation();
                 }
             });
@@ -120,5 +127,22 @@ public class NewsListFragment extends Fragment {
 
 
         return rootView;
+    }
+
+    private void menuSetBold(TextView textView){
+        textView.setTypeface(null, Typeface.BOLD);
+    }
+
+    private void menuSetNormal(View rootView){
+        TextView menu_near_me = (TextView) rootView.findViewById(R.id.menu_near_me);
+        TextView menu_trending = (TextView) rootView.findViewById(R.id.menu_trending);
+        EditText searchtxt = (EditText) rootView.findViewById(R.id.searchtxt);
+        menu_trending.setTypeface(null, Typeface.NORMAL);
+        menu_near_me.setTypeface(null, Typeface.NORMAL);
+        searchtxt.setTypeface(null, Typeface.NORMAL);
+    }
+
+    private void searchSetBold(EditText editText){
+        editText.setTypeface(null, Typeface.BOLD);
     }
 }
