@@ -135,6 +135,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             SharedPreferences.Editor editDataHerald = sharedPreferences.edit();
             editDataHerald.putString("email", Email);
             editDataHerald.putString("name", Name);
+            //set default location London
+            editDataHerald.putString("def_lat", "51.509865");
+            editDataHerald.putString("def_lon", "-0.118092");
             editDataHerald.commit();
         }
 
@@ -440,12 +443,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void onLocationChanged(@NonNull Location location) {
-        Toast.makeText(this, "" + location.getLatitude(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Location : " + location.getLatitude(), Toast.LENGTH_SHORT).show();
     }
 
 
     @Override
     public void onLocationChanged(@NonNull List<Location> locations) {
+        Toast.makeText(this, "Location changed ", Toast.LENGTH_SHORT).show();
         LocationListener.super.onLocationChanged(locations);
     }
 
@@ -491,8 +495,26 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 bestLocation = l;
             }
         }
-        //Toast.makeText(this, "" + bestLocation.getLongitude()+" "+bestLocation.getLatitude(), Toast.LENGTH_LONG).show();
-        getLocationBasedNews(bestLocation.getLatitude(), bestLocation.getLongitude());
+        if (bestLocation == null) {
+            //default location load
+            try {
+                SharedPreferences pref = getSharedPreferences("heraldNewsData", Context.MODE_PRIVATE);
+                String lat = pref.getString("def_lat", "");
+                String lon = pref.getString("def_lon", "");
+                getLocationBasedNews(Double.parseDouble(lat), Double.parseDouble(lon));
+                // getLocationBasedNews(bestLocation.getLatitude(), bestLocation.getLongitude());
+
+            } catch (Exception e) {
+                Toast.makeText(this, "Sorry! Unable to get location details. Please try again.", Toast.LENGTH_LONG).show();
+            }
+
+        } else {
+            try {
+                getLocationBasedNews(bestLocation.getLatitude(), bestLocation.getLongitude());
+            } catch (Exception e) {
+                Toast.makeText(this, "Sorry! Unable to get location. Please try again.", Toast.LENGTH_LONG).show();
+            }
+        }
         return bestLocation;
     }
 
@@ -501,6 +523,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         RequestQueue queue = Volley.newRequestQueue(this);
         String url = BASE_URL + "news?safeSearch=Off&textFormat=Raw";
         getIPAddress();
+
+        Toast.makeText(this, "" + lat + " " + longi, Toast.LENGTH_LONG).show();
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
