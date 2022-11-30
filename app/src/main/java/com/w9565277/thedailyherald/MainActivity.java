@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     DatabaseReference databaseReference;
     ReportedNews reportedNews;
 
-    TextView name, email;
+    //TextView header_user_name, email;
     Button logout;
 
     GoogleSignInOptions gso;
@@ -119,7 +119,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         ft.commit();
 
 
-        name = findViewById(R.id.user_name);
+        //header_user_name = findViewById(R.id.user_name);
 
         /**Google Sign in**/
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
@@ -139,6 +139,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             editDataHerald.putString("def_lat", "51.509865");
             editDataHerald.putString("def_lon", "-0.118092");
             editDataHerald.commit();
+           // header_user_name.setText(Name);
         }
 
         //location
@@ -729,6 +730,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             };
             queue.add(stringRequest);
         }
+    }
+
+    public void setHeaderMainHeader(TextView textView){
+        SharedPreferences pref = getSharedPreferences("heraldNewsData", Context.MODE_PRIVATE);
+        String name = pref.getString("name", "");
+        textView.setText(name);
     }
 
 }
