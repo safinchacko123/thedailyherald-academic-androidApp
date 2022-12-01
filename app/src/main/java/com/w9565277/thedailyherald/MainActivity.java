@@ -111,6 +111,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        getSupportActionBar().setTitle("Home");
 
         //Default Load News List
         FragmentManager fm = getSupportFragmentManager();
@@ -321,12 +322,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             SignOut();
         }
         if (id == R.id.nav_account) {
+            getSupportActionBar().setTitle("My Account");
             FragmentManager fm = getSupportFragmentManager();
             FragmentTransaction ft = fm.beginTransaction();
             ft.replace(R.id.container, new MyAccountFragment());
             ft.commit();
         }
         if (id == R.id.nav_citizen_journalist) {
+            getSupportActionBar().setTitle("Report News");
             FragmentManager fm = getSupportFragmentManager();
             FragmentTransaction ft = fm.beginTransaction();
             ft.replace(R.id.container, new ReportNewsFragment());
@@ -334,6 +337,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
         if (id == R.id.nav_news_list) {
+            getSupportActionBar().setTitle("Home");
             FragmentManager fm = getSupportFragmentManager();
             FragmentTransaction ft = fm.beginTransaction();
             ft.replace(R.id.container, new NewsListFragment());

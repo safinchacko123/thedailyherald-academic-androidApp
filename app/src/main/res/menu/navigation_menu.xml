@@ -15,7 +15,7 @@
 
     <item
         android:id="@+id/nav_citizen_journalist"
-        android:title="Report a News"
+        android:title="Report News"
         android:icon="@drawable/post_add"/>
 
     <item
