@@ -17,13 +17,15 @@
         android:layout_marginLeft="0dp"
         android:layout_marginTop="0dp"
         android:layout_marginRight="0dp"
-        android:padding="5dp" />
+        android:padding="5dp"
+        android:paddingBottom="0dp"/>
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="fill_parent"
-        android:background="@color/theme_bg_dark_red"
+        android:background="@color/body_bg_red"
         android:padding="5dp"
+        android:paddingTop="0dp"
         tools:context=".NewsListFragment">
 
 
@@ -94,7 +96,8 @@
             android:layout_gravity="left"
             android:orientation="vertical"
             android:paddingLeft="20dp"
-            android:paddingRight="20dp">
+            android:paddingRight="20dp"
+            >
 
 
         </LinearLayout>
