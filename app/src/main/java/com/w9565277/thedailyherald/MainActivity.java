@@ -422,6 +422,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 String lon = pref.getString("def_lon", "");
                 getLocationBasedNews(Double.parseDouble(lat), Double.parseDouble(lon));
                 // getLocationBasedNews(bestLocation.getLatitude(), bestLocation.getLongitude());
+                Log.d(getClass().getName(), "Default lat lon loaded ");
 
             } catch (Exception e) {
                 Toast.makeText(this, "Sorry! Unable to get location details. Please try again.", Toast.LENGTH_LONG).show();
@@ -429,6 +430,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         } else {
             try {
+                SharedPreferences sharedPreferences = getSharedPreferences("heraldNewsData", MODE_PRIVATE);
+                SharedPreferences.Editor editDataHerald = sharedPreferences.edit();
+                editDataHerald.putString("lat", String.valueOf(bestLocation.getLatitude()));
+                editDataHerald.putString("lon", String.valueOf(bestLocation.getLongitude()));
                 getLocationBasedNews(bestLocation.getLatitude(), bestLocation.getLongitude());
             } catch (Exception e) {
                 Toast.makeText(this, "Sorry! Unable to get location. Please try again.", Toast.LENGTH_LONG).show();

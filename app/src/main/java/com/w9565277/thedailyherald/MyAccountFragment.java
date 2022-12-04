@@ -64,9 +64,19 @@ public class MyAccountFragment extends Fragment {
         final View rootView = inflater.inflate(R.layout.fragment_my_account, container, false);
         TextView EmailTextView = (TextView) rootView.findViewById(R.id.emailValue);
         TextView UsernameTextView = (TextView) rootView.findViewById(R.id.username);
+        TextView lat_lonTextView = (TextView) rootView.findViewById(R.id.lat_long);
+        TextView label_last_locTextview = (TextView) rootView.findViewById(R.id.label_last_loc);
         SharedPreferences pref = getActivity().getSharedPreferences("heraldNewsData", Context.MODE_PRIVATE);
         String email = pref.getString("email", "");
         String username = pref.getString("name", "");
+        String lat = pref.getString("lat","");
+        String lon = pref.getString("lon","");
+
+        label_last_locTextview.setVisibility(View.INVISIBLE);
+        if(lat.trim().length()!=0 && lon.trim().length()!=0){
+            lat_lonTextView.setText(lat + " "+lon);
+            label_last_locTextview.setVisibility(View.VISIBLE);
+        }
         EmailTextView.setText(email);
         UsernameTextView.setText(username);
         return rootView;

@@ -107,7 +107,7 @@ public class NewsListFragment extends Fragment {
                     searchtxt.setText("");
                     menuSetNormal(rootView);
                     menuSetBold(menu_trending);
-                    Toast.makeText(getContext(), "Trending News Loaded !", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getContext(), "Trending News Loaded !", Toast.LENGTH_SHORT).show();
                     ((MainActivity) getActivity()).loadTrendingNews();
 
                 }

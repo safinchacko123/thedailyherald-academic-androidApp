@@ -70,6 +70,36 @@
                 android:ems="10"
                 android:textColor="@color/theme_txt_white" />
         </LinearLayout>
+
+
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="20dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.25"
+                android:text="Last Access Location"
+                android:id="@+id/label_last_loc"
+                android:textColor="@color/theme_txt_white" />
+
+            <TextView
+                android:id="@+id/lat_long"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.75"
+                android:ems="10"
+                android:textColor="@color/theme_txt_white" />
+        </LinearLayout>
+
+
+
+
+
     </LinearLayout>
 </LinearLayout>
 
