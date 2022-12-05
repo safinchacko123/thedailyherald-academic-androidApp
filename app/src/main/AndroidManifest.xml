@@ -21,25 +21,35 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".SplashScreenActivity"
+            android:exported="true"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
             android:name=".NewsListView"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
-
         <activity
             android:name=".LoginActivity"
-            android:exported="true">
+            android:exported="true"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
 
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".MainActivity"
@@ -47,16 +57,11 @@
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
-
-
-        </activity>
-
-<!--        <meta-data android:name="RAPID_API_KEY"-->
-<!--         android:value="8a13e7d2d4msh914d61b12bb5b6bp19f258jsn1e5059e69ede"/>-->
+        </activity> <!-- <meta-data android:name="RAPID_API_KEY" -->
+        <!-- android:value="8a13e7d2d4msh914d61b12bb5b6bp19f258jsn1e5059e69ede"/> -->
         <meta-data
             android:name="RAPID_API_KEY"
             android:value="36e620342fmsh81fd5754ebf8013p182a5fjsn99cb76b80cfe" />
-
         <meta-data
             android:name="RAPID_API_HOST"
             android:value="bing-news-search1.p.rapidapi.com" />

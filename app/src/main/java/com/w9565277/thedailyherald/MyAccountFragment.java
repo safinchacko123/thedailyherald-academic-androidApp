@@ -74,7 +74,7 @@ public class MyAccountFragment extends Fragment {
 
         label_last_locTextview.setVisibility(View.INVISIBLE);
         if(lat.trim().length()!=0 && lon.trim().length()!=0){
-            lat_lonTextView.setText(lat + " "+lon);
+            lat_lonTextView.setText("Latitude: "+lat + " \n "+"Longitude: "+lon);
             label_last_locTextview.setVisibility(View.VISIBLE);
         }
         EmailTextView.setText(email);

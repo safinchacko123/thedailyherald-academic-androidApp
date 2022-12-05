@@ -38,6 +38,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="0.25"
                 android:text="Email"
+                android:textStyle="bold"
                 android:textColor="@color/theme_txt_white" />
 
             <TextView
@@ -60,7 +61,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="0.25"
                 android:text="Name"
-                android:textColor="@color/theme_txt_white" />
+                android:textColor="@color/theme_txt_white"
+                android:textStyle="bold"/>
 
             <TextView
                 android:id="@+id/username"
@@ -83,9 +85,10 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.25"
-                android:text="Last Access Location"
+                android:text="Last Accessed Location"
                 android:id="@+id/label_last_loc"
-                android:textColor="@color/theme_txt_white" />
+                android:textColor="@color/theme_txt_white"
+                android:textStyle="bold"/>
 
             <TextView
                 android:id="@+id/lat_long"

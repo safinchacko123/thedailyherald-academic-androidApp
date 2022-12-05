@@ -432,8 +432,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             try {
                 SharedPreferences sharedPreferences = getSharedPreferences("heraldNewsData", MODE_PRIVATE);
                 SharedPreferences.Editor editDataHerald = sharedPreferences.edit();
-                editDataHerald.putString("lat", String.valueOf(bestLocation.getLatitude()));
-                editDataHerald.putString("lon", String.valueOf(bestLocation.getLongitude()));
+                Double lat = bestLocation.getLatitude();
+                Double lon = bestLocation.getLongitude();
+
+                editDataHerald.putString("lat", Double.toString(lat));
+                editDataHerald.putString("lon", Double.toString(lon));
+                editDataHerald.commit();
+
                 getLocationBasedNews(bestLocation.getLatitude(), bestLocation.getLongitude());
             } catch (Exception e) {
                 Toast.makeText(this, "Sorry! Unable to get location. Please try again.", Toast.LENGTH_LONG).show();
