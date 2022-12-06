@@ -21,6 +21,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -128,14 +129,32 @@ public class NewsListFragment extends Fragment {
         }
 
 
+        SwipeRefreshLayout pullToRefresh = (SwipeRefreshLayout) rootView.findViewById(R.id.pullToRefresh);
+        pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                String activeMenu = ((MainActivity) getActivity()).activeMenu;
+                if (activeMenu == "trending") {
+                    ((MainActivity) getActivity()).loadTrendingNews();
+                } else if (activeMenu == "nearme") {
+                    ((MainActivity) getActivity()).getLocation();
+                } else if (activeMenu == "search") {
+                    ((MainActivity) getActivity()).searchNewsbyTopic();
+                } else {
+                    ((MainActivity) getActivity()).loadTrendingNews();
+                }
+                pullToRefresh.setRefreshing(false);
+            }
+        });
+
         return rootView;
     }
 
-    private void menuSetBold(TextView textView){
+    private void menuSetBold(TextView textView) {
         textView.setTypeface(null, Typeface.BOLD);
     }
 
-    private void menuSetNormal(View rootView){
+    private void menuSetNormal(View rootView) {
         TextView menu_near_me = (TextView) rootView.findViewById(R.id.menu_near_me);
         TextView menu_trending = (TextView) rootView.findViewById(R.id.menu_trending);
         EditText searchtxt = (EditText) rootView.findViewById(R.id.searchtxt);
@@ -144,7 +163,7 @@ public class NewsListFragment extends Fragment {
         searchtxt.setTypeface(null, Typeface.NORMAL);
     }
 
-    private void searchSetBold(EditText editText){
+    private void searchSetBold(EditText editText) {
         editText.setTypeface(null, Typeface.BOLD);
     }
 }

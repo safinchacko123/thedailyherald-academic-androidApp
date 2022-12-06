@@ -101,7 +101,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public ActionBarDrawerToggle actionBarDrawerToggle;
     Bitmap bitmapImage;
     String loggedInEmail = "";
-
+    String activeMenu = "trending";
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -193,6 +193,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     public void loadTrendingNews() {
+        this.activeMenu = "trending";
         String BASE_URL = getMetadata(getApplicationContext(), "RAPID_API_BASE_URL");
         RequestQueue queue = Volley.newRequestQueue(this);
         String url = BASE_URL + "news?safeSearch=Off&textFormat=Raw";
@@ -448,6 +449,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void getLocationBasedNews(double lat, double longi) {
+        this.activeMenu = "nearme";
         String BASE_URL = getMetadata(getApplicationContext(), "RAPID_API_BASE_URL");
         RequestQueue queue = Volley.newRequestQueue(this);
         String url = BASE_URL + "news?safeSearch=Off&textFormat=Raw";
@@ -646,7 +648,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     //Search news
     public void searchNewsbyTopic() {
-
+        this.activeMenu = "search";
         String BASE_URL = getMetadata(getApplicationContext(), "RAPID_API_BASE_URL");
         RequestQueue queue = Volley.newRequestQueue(this);
         EditText searchTextBox = (EditText) findViewById(R.id.searchtxt);
