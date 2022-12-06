@@ -85,17 +85,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     DatabaseReference databaseReference;
     ReportedNews reportedNews;
 
-    //TextView header_user_name, email;
     Button logout;
 
     GoogleSignInOptions gso;
     GoogleSignInClient gsc;
     LocationManager locationManager;
     String latitude, longitude, ipAddress;
-
-    private Spinner menu_spinner;
-    private static final String[] paths = {"-Topic-", "Sports", "Fashion", "Politics"};
-    private ListView listview;
 
     public DrawerLayout drawerLayout;
     public ActionBarDrawerToggle actionBarDrawerToggle;
@@ -106,7 +101,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -120,9 +114,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         ft.commit();
 
 
-        //header_user_name = findViewById(R.id.user_name);
-
-        /**Google Sign in**/
+        /**Google Sign in get data and save in shared pref**/
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
         gsc = GoogleSignIn.getClient(this, gso);
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
@@ -140,10 +132,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             editDataHerald.putString("def_lat", "51.509865");
             editDataHerald.putString("def_lon", "-0.118092");
             editDataHerald.commit();
-           // header_user_name.setText(Name);
         }
 
-        //location
+        //permission for location
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != getPackageManager().PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{
                     Manifest.permission.ACCESS_FINE_LOCATION
@@ -154,9 +145,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             enableLocationOnDevice();
         }
 
+        //Navigation drawer
         drawerLayout = findViewById(R.id.my_drawer_layout);
         actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.nav_open, R.string.nav_close);
-
         drawerLayout.addDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.syncState();
 
@@ -168,12 +159,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             mNavigationView.setNavigationItemSelectedListener(this);
         }
 
-        //setup database
+        //setup database for firebase
         databaseReference = FirebaseDatabase.getInstance().getReference("ReportedNews");
-
     }
 
-
+    //clear saved shared pref when sign out
     private void SignOut() {
         gsc.signOut().addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
@@ -192,6 +182,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
     }
 
+    //load trending api from RAPID API
     public void loadTrendingNews() {
         this.activeMenu = "trending";
         String BASE_URL = getMetadata(getApplicationContext(), "RAPID_API_BASE_URL");
@@ -252,6 +243,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         }) {
 
+            //set header for api calls
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
@@ -263,7 +255,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 return params;
             }
 
-            //Pass Your Parameters here
+            //Pass Parameters here
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<String, String>();
@@ -274,7 +266,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         queue.add(stringRequest);
     }
 
-
+    //get meta data that are saved.
     public static String getMetadata(Context context, String key) {
         try {
             Bundle metaData = context.getPackageManager().getApplicationInfo(context.getPackageName(), PackageManager.GET_META_DATA).metaData;
@@ -315,6 +307,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return super.onOptionsItemSelected(item);
     }
 
+    //menu item switch
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
@@ -344,13 +337,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             ft.replace(R.id.container, new NewsListFragment());
             ft.commit();
         }
-
-
         drawerLayout.closeDrawers();
         return false;
     }
 
-
+    //ask for location
     @SuppressLint("MissingPermission")
     public void getLocation() {
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -363,13 +354,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void onLocationChanged(@NonNull Location location) {
-       // Toast.makeText(this, "Location : " + location.getLatitude(), Toast.LENGTH_SHORT).show();
+        // Toast.makeText(this, "Location : " + location.getLatitude(), Toast.LENGTH_SHORT).show();
     }
 
 
     @Override
     public void onLocationChanged(@NonNull List<Location> locations) {
-      //  Toast.makeText(this, "Location changed ", Toast.LENGTH_SHORT).show();
+        //  Toast.makeText(this, "Location changed ", Toast.LENGTH_SHORT).show();
         LocationListener.super.onLocationChanged(locations);
     }
 
@@ -399,6 +390,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onPointerCaptureChanged(hasCapture);
     }
 
+    //get location data
     private Location getLastKnownLocation() {
         Location l = null;
         LocationManager mLocationManager = (LocationManager) getApplicationContext().getSystemService(LOCATION_SERVICE);
@@ -416,7 +408,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         }
         if (bestLocation == null) {
-            //default location load
+            //if best location has no data then use saved default location to get data from api
             try {
                 SharedPreferences pref = getSharedPreferences("heraldNewsData", Context.MODE_PRIVATE);
                 String lat = pref.getString("def_lat", "");
@@ -431,6 +423,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         } else {
             try {
+                //load data with accurate location lat and lon
                 SharedPreferences sharedPreferences = getSharedPreferences("heraldNewsData", MODE_PRIVATE);
                 SharedPreferences.Editor editDataHerald = sharedPreferences.edit();
                 Double lat = bestLocation.getLatitude();
@@ -448,6 +441,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return bestLocation;
     }
 
+    //load api with lat and lon
     private void getLocationBasedNews(double lat, double longi) {
         this.activeMenu = "nearme";
         String BASE_URL = getMetadata(getApplicationContext(), "RAPID_API_BASE_URL");
@@ -455,7 +449,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         String url = BASE_URL + "news?safeSearch=Off&textFormat=Raw";
         getIPAddress();
 
-       // Toast.makeText(this, "" + lat + " " + longi, Toast.LENGTH_LONG).show();
+        // Toast.makeText(this, "" + lat + " " + longi, Toast.LENGTH_LONG).show();
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
@@ -556,15 +550,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         alertDialog.show();
     }
 
-
+    //get ip address to get accurate location based news from api
     public void getIPAddress() {
         WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
         String ip = Formatter.formatIpAddress(wifiManager.getConnectionInfo().getIpAddress());
         ipAddress = ip;
-        //Toast.makeText(getBaseContext(), ipAddress, Toast.LENGTH_SHORT).show();
-
     }
 
+    //check camera permission
     public void getCameraImage(View view) {
         bitmapImage = null;
         Button btnCamera = findViewById(R.id.btnCamera);
@@ -594,7 +587,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-
+    //save news to firebase
     public void submitReportNews(View view) throws JSONException {
         TextView headline = (TextView) findViewById(R.id.headline);
         TextView desc = (TextView) findViewById(R.id.desc);
@@ -748,7 +741,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-    public void setHeaderMainHeader(TextView textView){
+    //header fragment set username
+    public void setHeaderMainHeader(TextView textView) {
         SharedPreferences pref = getSharedPreferences("heraldNewsData", Context.MODE_PRIVATE);
         String name = pref.getString("name", "");
         textView.setText(name);

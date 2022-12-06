@@ -77,8 +77,7 @@ public class NewsListFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         final View rootView = inflater.inflate(R.layout.fragment_news_list, container, false);
 
@@ -128,7 +127,7 @@ public class NewsListFragment extends Fragment {
             });
         }
 
-
+//when the user swipe down then refresh the list
         SwipeRefreshLayout pullToRefresh = (SwipeRefreshLayout) rootView.findViewById(R.id.pullToRefresh);
         pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -154,6 +153,7 @@ public class NewsListFragment extends Fragment {
         textView.setTypeface(null, Typeface.BOLD);
     }
 
+    //set menu name bold or normal when selected
     private void menuSetNormal(View rootView) {
         TextView menu_near_me = (TextView) rootView.findViewById(R.id.menu_near_me);
         TextView menu_trending = (TextView) rootView.findViewById(R.id.menu_trending);
@@ -163,6 +163,7 @@ public class NewsListFragment extends Fragment {
         searchtxt.setTypeface(null, Typeface.NORMAL);
     }
 
+    //set bold textview dynamically
     private void searchSetBold(EditText editText) {
         editText.setTypeface(null, Typeface.BOLD);
     }

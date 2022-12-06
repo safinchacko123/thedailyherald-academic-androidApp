@@ -66,6 +66,8 @@ public class MyAccountFragment extends Fragment {
         TextView UsernameTextView = (TextView) rootView.findViewById(R.id.username);
         TextView lat_lonTextView = (TextView) rootView.findViewById(R.id.lat_long);
         TextView label_last_locTextview = (TextView) rootView.findViewById(R.id.label_last_loc);
+
+        //set saved data in view
         SharedPreferences pref = getActivity().getSharedPreferences("heraldNewsData", Context.MODE_PRIVATE);
         String email = pref.getString("email", "");
         String username = pref.getString("name", "");

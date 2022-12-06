@@ -38,6 +38,7 @@ public class SplashScreenActivity extends AppCompatActivity {
                 String name = sh.getString("name", "");
                 Intent i = new Intent(SplashScreenActivity.this, LoginActivity.class);
 
+                //if already signed in then go to listing page
                 if (!TextUtils.isEmpty(Email)) {
                     i = new Intent(SplashScreenActivity.this, MainActivity.class);
                 }
