@@ -5,9 +5,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".NewsListFragment"
     android:background="@color/theme_bg_dark_red"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context=".NewsListFragment">
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/headerfragment"
@@ -18,15 +18,14 @@
         android:layout_marginTop="0dp"
         android:layout_marginRight="0dp"
         android:padding="5dp"
-        />
+        android:paddingBottom="0dp"/>
 
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="fill_parent"
-        android:background="@color/theme_bg_dark_red"
+        android:background="@color/body_bg_red"
         android:padding="5dp"
+        android:paddingTop="0dp"
         tools:context=".NewsListFragment">
 
 
@@ -58,20 +57,30 @@
                 android:text="Near Me"
                 android:textColor="@color/theme_bg_dark_red" />
 
-            <Spinner
-                android:id="@+id/menu_spinner"
-                android:layout_width="10dp"
-                android:layout_height="20dp"
+            <EditText
+                android:id="@+id/searchtxt"
+                android:layout_width="20dp"
+                android:layout_height="30dp"
                 android:layout_marginTop="0dp"
-                android:layout_weight=".50"
+                android:layout_marginRight="10dp"
+                android:layout_weight="0.50"
+                android:hint="Search Topic"
+                android:imeOptions="actionSearch"
+                android:inputType="text"
+                android:padding="5dp"
                 android:textColor="@color/theme_bg_dark_red"
-                android:theme="@style/mySpinnerItemStyle"
+                android:textSize="10dp"
+                tools:ignore="TouchTargetSizeCheck"
+                android:backgroundTint="@color/theme_bg_dark_red"/>
 
-                />
 
         </LinearLayout>
 
-
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/pullToRefresh"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="30dp">
         <ListView
             android:id="@+id/newslist"
             android:layout_width="fill_parent"
@@ -82,16 +91,18 @@
             android:scrollingCache="false"
             android:smoothScrollbar="true" />
 
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/newslist"
+            android:layout_below="@id/pullToRefresh"
             android:layout_alignParentBottom="true"
             android:layout_gravity="left"
             android:orientation="vertical"
             android:paddingLeft="20dp"
-            android:paddingRight="20dp">
+            android:paddingRight="20dp"
+            >
 
 
         </LinearLayout>

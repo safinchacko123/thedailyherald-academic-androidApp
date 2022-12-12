@@ -89,15 +89,15 @@ public class NewsListAdapter implements ListAdapter {
             convertView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    if (position >= 0) {
+                        NewsListSubjectData item = getItem(position);
+                        String url = item.NewsUrl;
 
-                    NewsListSubjectData item = getItem(position);
-                    String url = item.NewsUrl;
-
-                    Uri uri = Uri.parse(url);
-                    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    context.startActivity(intent);
-
+                        Uri uri = Uri.parse(url);
+                        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        context.startActivity(intent);
+                    }
                 }
 
 
@@ -110,11 +110,13 @@ public class NewsListAdapter implements ListAdapter {
             // imag.getLayoutParams().height= 375;//subjectData.ImageHeight;
             //imag.getLayoutParams().height= subjectData.ImageHeight;
             // imag.getLayoutParams().width= subjectData.ImageWidth;
-            tittle.setText(HtmlCompat.fromHtml(subjectData.SubjectName, HtmlCompat.FROM_HTML_MODE_LEGACY));
-            //tittle.setText(subjectData.SubjectName);
-            Picasso.with(context)
-                    .load(subjectData.Image)
-                    .into(imag);
+            if (tittle != null) {
+                tittle.setText(HtmlCompat.fromHtml(subjectData.SubjectName, HtmlCompat.FROM_HTML_MODE_LEGACY));
+                //tittle.setText(subjectData.SubjectName);
+                Picasso.with(context)
+                        .load(subjectData.Image)
+                        .into(imag);
+            }
 
         }
         return convertView;
@@ -127,7 +129,7 @@ public class NewsListAdapter implements ListAdapter {
 
     @Override
     public int getViewTypeCount() {
-        return arrayList.size();
+        return 1;
     }
 
     @Override

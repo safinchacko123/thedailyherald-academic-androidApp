@@ -1,14 +1,18 @@
 package com.w9565277.thedailyherald;
 
 import android.annotation.SuppressLint;
+import android.graphics.Typeface;
 import android.location.LocationManager;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -17,6 +21,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,7 +34,6 @@ import android.widget.TextView;
  * create an instance of this fragment.
  */
 public class NewsListFragment extends Fragment {
-
 
 
     // TODO: Rename parameter arguments, choose names that match
@@ -73,35 +77,94 @@ public class NewsListFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        final View rootView = inflater.inflate(R.layout.fragment_news_list, container, false);
+
+        //Search box
+        EditText searchtxt = (EditText) rootView.findViewById(R.id.searchtxt);
+        searchtxt.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                    menuSetNormal(rootView);
+                    searchSetBold(searchtxt);
+                    ((MainActivity) getActivity()).searchNewsbyTopic();
+                    return true;
+                }
+                return false;
+            }
+        });
 
         //Menu Trending Default Loading
-        ((MainActivity)getActivity()).loadTrendingNews();
-        final View rootView = inflater.inflate(R.layout.fragment_news_list, container, false);
-         TextView menu_trending = (TextView) rootView.findViewById(R.id.menu_trending);
-         if(menu_trending!=null){
+        ((MainActivity) getActivity()).loadTrendingNews();
+        TextView menu_trending = (TextView) rootView.findViewById(R.id.menu_trending);
+        menuSetNormal(rootView);
+        menuSetBold(menu_trending);
+        if (menu_trending != null) {
             menu_trending.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
-                    Toast.makeText(getContext(), "Trending News Loaded !", Toast.LENGTH_SHORT).show();
-                     ((MainActivity)getActivity()).loadTrendingNews();
+                    searchtxt.setText("");
+                    menuSetNormal(rootView);
+                    menuSetBold(menu_trending);
+                    //Toast.makeText(getContext(), "Trending News Loaded !", Toast.LENGTH_SHORT).show();
+                    ((MainActivity) getActivity()).loadTrendingNews();
 
                 }
             });
         }
 
-         TextView menu_near_me = (TextView) rootView.findViewById(R.id.menu_near_me);
-
-        if(menu_near_me!=null){
+        //location based near me
+        TextView menu_near_me = (TextView) rootView.findViewById(R.id.menu_near_me);
+        if (menu_near_me != null) {
             menu_near_me.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
-                    ((MainActivity)getActivity()).getLocation();
+                    searchtxt.setText("");
+                    menuSetNormal(rootView);
+                    menuSetBold(menu_near_me);
+                    ((MainActivity) getActivity()).getLocation();
                 }
             });
         }
 
+//when the user swipe down then refresh the list
+        SwipeRefreshLayout pullToRefresh = (SwipeRefreshLayout) rootView.findViewById(R.id.pullToRefresh);
+        pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                String activeMenu = ((MainActivity) getActivity()).activeMenu;
+                if (activeMenu == "trending") {
+                    ((MainActivity) getActivity()).loadTrendingNews();
+                } else if (activeMenu == "nearme") {
+                    ((MainActivity) getActivity()).getLocation();
+                } else if (activeMenu == "search") {
+                    ((MainActivity) getActivity()).searchNewsbyTopic();
+                } else {
+                    ((MainActivity) getActivity()).loadTrendingNews();
+                }
+                pullToRefresh.setRefreshing(false);
+            }
+        });
 
         return rootView;
+    }
+
+    private void menuSetBold(TextView textView) {
+        textView.setTypeface(null, Typeface.BOLD);
+    }
+
+    //set menu name bold or normal when selected
+    private void menuSetNormal(View rootView) {
+        TextView menu_near_me = (TextView) rootView.findViewById(R.id.menu_near_me);
+        TextView menu_trending = (TextView) rootView.findViewById(R.id.menu_trending);
+        EditText searchtxt = (EditText) rootView.findViewById(R.id.searchtxt);
+        menu_trending.setTypeface(null, Typeface.NORMAL);
+        menu_near_me.setTypeface(null, Typeface.NORMAL);
+        searchtxt.setTypeface(null, Typeface.NORMAL);
+    }
+
+    //set bold textview dynamically
+    private void searchSetBold(EditText editText) {
+        editText.setTypeface(null, Typeface.BOLD);
     }
 }

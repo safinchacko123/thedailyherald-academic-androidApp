@@ -32,6 +32,8 @@
         android:gravity="end"
         android:text=""
         android:textAlignment="textEnd"
-        android:textColor="@color/theme_txt_white" />
+        android:paddingTop="15dp"
+        android:textColor="@color/theme_txt_white"
+        android:lines="1"/>
 
 </LinearLayout>
