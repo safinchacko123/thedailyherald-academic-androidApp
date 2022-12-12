@@ -19,137 +19,122 @@
         tools:layout="@layout/fragment_header" />
 
     <LinearLayout
-        android:layout_width="fill_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="20dp">
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.25"
-            android:text="Headline"
-            android:textColor="@color/theme_txt_white"/>
-
-        <EditText
-            android:id="@+id/headline"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.75"
-            android:ems="10" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="20dp">
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.25"
-            android:text="Description"
-            android:textColor="@color/theme_txt_white"/>
-
-        <EditText
-            android:id="@+id/desc"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.75"
-            android:ems="10" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="20dp">
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="0.25"
-            android:text="Upload Image"
-            android:textColor="@color/theme_txt_white"/>
-
-        <Button
-            android:id="@+id/btnCamera"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="4dp"
-            android:backgroundTint="@color/theme_txt_white"
-            android:shadowColor="@color/theme_txt_white"
-            android:ems="6"
-            android:text="Upload"
-            android:textColor="@color/theme_bg_dark_red"
-            android:clickable="true"
-            android:onClick="getCameraImage"/>
-    </LinearLayout>
-
-    <!--<LinearLayout-->
-    <!--    android:layout_width="fill_parent"-->
-    <!--    android:layout_height="wrap_content"-->
-    <!--    android:orientation="horizontal" >-->
-
-    <!--&lt;!&ndash;    <TextView&ndash;&gt;-->
-    <!--&lt;!&ndash;        android:layout_width="0dp"&ndash;&gt;-->
-    <!--&lt;!&ndash;        android:layout_height="wrap_content"&ndash;&gt;-->
-    <!--&lt;!&ndash;        android:layout_gravity="center_vertical"&ndash;&gt;-->
-    <!--&lt;!&ndash;        android:layout_weight="0.25"&ndash;&gt;-->
-    <!--&lt;!&ndash;        android:text="@string/lblIsbn" />&ndash;&gt;-->
-
-    <!--&lt;!&ndash;    <LinearLayout&ndash;&gt;-->
-    <!--&lt;!&ndash;        android:layout_width="0dp"&ndash;&gt;-->
-    <!--&lt;!&ndash;        android:layout_height="wrap_content"&ndash;&gt;-->
-    <!--&lt;!&ndash;        android:layout_weight="0.75"&ndash;&gt;-->
-    <!--&lt;!&ndash;        android:orientation="horizontal" >&ndash;&gt;-->
-
-    <!--&lt;!&ndash;        <EditText&ndash;&gt;-->
-    <!--&lt;!&ndash;            android:id="@+id/txtIsbn"&ndash;&gt;-->
-    <!--&lt;!&ndash;            android:layout_width="wrap_content"&ndash;&gt;-->
-    <!--&lt;!&ndash;            android:layout_height="wrap_content"&ndash;&gt;-->
-    <!--&lt;!&ndash;            android:ems="5" />&ndash;&gt;-->
-    <!--&lt;!&ndash;    </LinearLayout>&ndash;&gt;-->
-    <!--</LinearLayout>-->
-
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <View
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.25" />
+        android:background="@color/body_bg_red"
+        android:orientation="vertical">
 
         <LinearLayout
-            android:layout_width="0dp"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="0.75"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:padding="20dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.25"
+                android:text="Headline"
+                android:textColor="@color/theme_txt_white"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/headline"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.75"
+                android:ems="10" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="20dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.25"
+                android:text="Description"
+                android:textColor="@color/theme_txt_white"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/desc"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.75"
+                android:ems="10" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="20dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.25"
+                android:text="Upload Image"
+                android:textColor="@color/theme_txt_white"
+                android:textStyle="bold" />
 
             <Button
-                android:id="@+id/btnSubmit"
+                android:id="@+id/btnCamera"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="4dp"
                 android:backgroundTint="@color/theme_txt_white"
-                android:shadowColor="@color/theme_txt_white"
+                android:clickable="true"
                 android:ems="6"
-                android:text="Submit"
-                android:textColor="@color/theme_bg_dark_red"
-                android:onClick="submitReportNews"/>
+                android:minHeight="5dp"
+                android:onClick="getCameraImage"
+                android:shadowColor="@color/theme_txt_white"
+                android:text="Upload"
+                android:textColor="@color/theme_bg_dark_red" />
+        </LinearLayout>
 
-<!--            <Button-->
-<!--                android:id="@+id/btnCancel"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:backgroundTint="@color/theme_txt_white"-->
-<!--                android:ems="6"-->
-<!--                android:text="Cancel"-->
-<!--                android:textColor="@color/theme_bg_dark_red" />-->
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.25" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.75"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btnSubmit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="4dp"
+                    android:backgroundTint="@color/theme_txt_white"
+                    android:ems="6"
+                    android:onClick="submitReportNews"
+                    android:shadowColor="@color/theme_txt_white"
+                    android:text="Submit"
+                    android:textColor="@color/theme_bg_dark_red" />
+
+                <!--            <Button-->
+                <!--                android:id="@+id/btnCancel"-->
+                <!--                android:layout_width="wrap_content"-->
+                <!--                android:layout_height="wrap_content"-->
+                <!--                android:backgroundTint="@color/theme_txt_white"-->
+                <!--                android:ems="6"-->
+                <!--                android:text="Cancel"-->
+                <!--                android:textColor="@color/theme_bg_dark_red" />-->
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
-
 </LinearLayout>
