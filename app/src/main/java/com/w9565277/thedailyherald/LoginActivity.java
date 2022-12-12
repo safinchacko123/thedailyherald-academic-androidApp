@@ -27,12 +27,12 @@ public class LoginActivity extends AppCompatActivity {
     GoogleSignInOptions gso;
     GoogleSignInClient gsc;
 
+    //google sign in and load main activity with listing view
     ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             new ActivityResultCallback<ActivityResult>() {
                 @Override
                 public void onActivityResult(ActivityResult activityResult) {
-
                     if (activityResult.getResultCode() == RESULT_OK) {
                         Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(activityResult.getData());
                         loadListingActivity();
@@ -46,21 +46,19 @@ public class LoginActivity extends AppCompatActivity {
         String Email = sh.getString("email", "");
         String name = sh.getString("name", "");
         if (!TextUtils.isEmpty(Email)) {
+            // if already login then load list view
             loadListingActivity();
         }
         super.onCreate(savedInstanceState);
-        try
-        {
+        try {
             this.getSupportActionBar().hide();
+        } catch (NullPointerException e) {
         }
-        catch (NullPointerException e){}
         setContentView(R.layout.activity_login);
 
-
-
+        //google sign in using button click
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
         gsc = GoogleSignIn.getClient(this, gso);
-
         findViewById(R.id.google_signin).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -69,18 +67,16 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    //sign in function for google sign in popup
     public void SignIn() {
-
         Intent intent = gsc.getSignInIntent();
-        //deprecated function commended and implemented new
-        //startActivityForResult(intent, 100);
         activityResultLauncher.launch(intent);
     }
 
+    //function for load listing view in main activity
     private void loadListingActivity() {
         finish();
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         startActivity(intent);
-
     }
 }

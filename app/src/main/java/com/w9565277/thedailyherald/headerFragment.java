@@ -7,6 +7,8 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.TextView;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -59,6 +61,10 @@ public class headerFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_header, container, false);
+
+        final View rootView = inflater.inflate(R.layout.fragment_header, container, false);
+        TextView header_user_name = (TextView) rootView.findViewById(R.id.user_name);
+        ((MainActivity) getActivity()).setHeaderMainHeader(header_user_name);
+        return rootView;
     }
 }

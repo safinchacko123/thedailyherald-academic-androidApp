@@ -23,6 +23,7 @@ import android.graphics.Bitmap;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -30,13 +31,16 @@ import android.provider.Settings;
 import android.text.format.Formatter;
 import android.util.Base64;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -81,7 +85,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     DatabaseReference databaseReference;
     ReportedNews reportedNews;
 
-    TextView name, email;
     Button logout;
 
     GoogleSignInOptions gso;
@@ -89,24 +92,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     LocationManager locationManager;
     String latitude, longitude, ipAddress;
 
-    private Spinner menu_spinner;
-    private static final String[] paths = {"-Topic-", "Sports", "Fashion", "Politics"};
-    private ListView listview;
-
     public DrawerLayout drawerLayout;
     public ActionBarDrawerToggle actionBarDrawerToggle;
     Bitmap bitmapImage;
     String loggedInEmail = "";
-
+    String activeMenu = "trending";
 
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        getSupportActionBar().setTitle("Home");
 
         //Default Load News List
         FragmentManager fm = getSupportFragmentManager();
@@ -115,12 +114,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         ft.commit();
 
 
-        name = findViewById(R.id.user_name);
-        //email = findViewById(R.id.email);
-        //logout = findViewById(R.id.logout);
-
-
-        /**Google Sign in**/
+        /**Google Sign in get data and save in shared pref**/
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
         gsc = GoogleSignIn.getClient(this, gso);
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
@@ -129,43 +123,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             String Email = account.getEmail();
             loggedInEmail = Email;
 
-            // name.setText(Name);
-            //email.setText(Email);
-
-            Toast.makeText(getBaseContext(), Name, Toast.LENGTH_SHORT).show();
-
-
             // Storing data into SharedPreferences
             SharedPreferences sharedPreferences = getSharedPreferences("heraldNewsData", MODE_PRIVATE);
             SharedPreferences.Editor editDataHerald = sharedPreferences.edit();
             editDataHerald.putString("email", Email);
             editDataHerald.putString("name", Name);
+            //set default location London
+            editDataHerald.putString("def_lat", "51.509865");
+            editDataHerald.putString("def_lon", "-0.118092");
             editDataHerald.commit();
         }
 
-        /**Dropdown**/
-//        menu_spinner = (Spinner) findViewById(R.id.menu_spinner);
-//        ArrayAdapter<String> adapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_spinner_item, paths);
-//        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//        menu_spinner.setAdapter(adapter);
-//        menu_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-//            String news_category;
-//
-//            @Override
-//            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-//                news_category = String.valueOf(adapterView.getItemAtPosition(i));
-//                Toast.makeText(getBaseContext(), news_category, Toast.LENGTH_SHORT).show();
-//            }
-//
-//            @Override
-//            public void onNothingSelected(AdapterView<?> adapterView) {
-//
-//            }
-//
-//        });
-
-
-        //location
+        //permission for location
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != getPackageManager().PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{
                     Manifest.permission.ACCESS_FINE_LOCATION
@@ -176,13 +145,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             enableLocationOnDevice();
         }
 
-
-        // loadTrendingNews();
-
-
+        //Navigation drawer
         drawerLayout = findViewById(R.id.my_drawer_layout);
         actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.nav_open, R.string.nav_close);
-
         drawerLayout.addDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.syncState();
 
@@ -194,12 +159,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             mNavigationView.setNavigationItemSelectedListener(this);
         }
 
-        //setup database
+        //setup database for firebase
         databaseReference = FirebaseDatabase.getInstance().getReference("ReportedNews");
-
     }
 
-
+    //clear saved shared pref when sign out
     private void SignOut() {
         gsc.signOut().addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
@@ -218,7 +182,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
     }
 
+    //load trending api from RAPID API
     public void loadTrendingNews() {
+        this.activeMenu = "trending";
         String BASE_URL = getMetadata(getApplicationContext(), "RAPID_API_BASE_URL");
         RequestQueue queue = Volley.newRequestQueue(this);
         String url = BASE_URL + "news?safeSearch=Off&textFormat=Raw";
@@ -277,6 +243,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         }) {
 
+            //set header for api calls
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
@@ -288,7 +255,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 return params;
             }
 
-            //Pass Your Parameters here
+            //Pass Parameters here
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<String, String>();
@@ -299,7 +266,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         queue.add(stringRequest);
     }
 
-
+    //get meta data that are saved.
     public static String getMetadata(Context context, String key) {
         try {
             Bundle metaData = context.getPackageManager().getApplicationInfo(context.getPackageName(), PackageManager.GET_META_DATA).metaData;
@@ -340,6 +307,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return super.onOptionsItemSelected(item);
     }
 
+    //menu item switch
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
@@ -348,12 +316,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             SignOut();
         }
         if (id == R.id.nav_account) {
+            getSupportActionBar().setTitle("My Account");
             FragmentManager fm = getSupportFragmentManager();
             FragmentTransaction ft = fm.beginTransaction();
             ft.replace(R.id.container, new MyAccountFragment());
             ft.commit();
         }
         if (id == R.id.nav_citizen_journalist) {
+            getSupportActionBar().setTitle("Report News");
             FragmentManager fm = getSupportFragmentManager();
             FragmentTransaction ft = fm.beginTransaction();
             ft.replace(R.id.container, new ReportNewsFragment());
@@ -361,104 +331,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
         if (id == R.id.nav_news_list) {
+            getSupportActionBar().setTitle("Home");
             FragmentManager fm = getSupportFragmentManager();
             FragmentTransaction ft = fm.beginTransaction();
             ft.replace(R.id.container, new NewsListFragment());
             ft.commit();
         }
-
-
         drawerLayout.closeDrawers();
         return false;
     }
 
-
-    private void loadNearMeNews() {
-        String BASE_URL = getMetadata(getApplicationContext(), "RAPID_API_BASE_URL");
-        RequestQueue queue = Volley.newRequestQueue(this);
-        String url = BASE_URL + "news?safeSearch=Off&textFormat=Raw";
-
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                // Log.d("worked", response);
-                ListView newslistview;
-
-                ArrayList<NewsListSubjectData> newsList = new ArrayList<NewsListSubjectData>();
-
-                newslistview = (ListView) findViewById(R.id.newslist);
-                String status = null;
-                JSONObject json2 = null;
-                JSONArray newsValues = null;
-
-
-                try {
-                    json2 = new JSONObject(response);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-                JSONArray school = null;
-                try {
-                    newsValues = json2.getJSONArray("value");
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                for (int i = 0; i < newsValues.length(); i++) {
-                    JSONObject object = null;
-                    try {
-                        object = newsValues.getJSONObject(i);
-                        SimpleDateFormat sdf = new SimpleDateFormat("y-M-d'T'H:m:s.SSS", Locale.ENGLISH);
-                        Date date = sdf.parse(object.getString("datePublished"));
-                        String image = object.getJSONObject("image").getJSONObject("thumbnail").getString("contentUrl");
-                        int imageWidth = object.getJSONObject("image").getJSONObject("thumbnail").getInt("width");
-                        int imageHeight = object.getJSONObject("image").getJSONObject("thumbnail").getInt("height");
-                        String dateVal = date.toString();
-
-                        newsList.add(new NewsListSubjectData(object.getString("name") + "<br/><font weight='1dp'><i>" + dateVal + "</i></font>", image.toString(), imageWidth, imageHeight, object.getString("url")));
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-
-                }
-                NewsListAdapter newsListAdapter = new NewsListAdapter(getApplicationContext(), newsList);
-                newslistview.setAdapter(newsListAdapter);
-
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.d("That didn't work!", "That didn't work!");
-            }
-        }) {
-
-            //This is for Headers If You Needed
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("Content-Type", "application/json; charset=UTF-8");
-                params.put("X-Rapidapi-Key", "8a13e7d2d4msh914d61b12bb5b6bp19f258jsn1e5059e69ede");
-                params.put("X-Bingapis-Sdk", "true");
-                params.put("X-Rapidapi-Host", "bing-news-search1.p.rapidapi.com");
-                params.put("X-Rapidapi-Host", "bing-news-search1.p.rapidapi.com");
-
-                return params;
-            }
-
-            //Pass Your Parameters here
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<String, String>();
-
-                return params;
-            }
-        };
-        queue.add(stringRequest);
-    }
-
+    //ask for location
     @SuppressLint("MissingPermission")
     public void getLocation() {
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -471,12 +354,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void onLocationChanged(@NonNull Location location) {
-        Toast.makeText(this, "" + location.getLatitude(), Toast.LENGTH_SHORT).show();
+        // Toast.makeText(this, "Location : " + location.getLatitude(), Toast.LENGTH_SHORT).show();
     }
 
 
     @Override
     public void onLocationChanged(@NonNull List<Location> locations) {
+        //  Toast.makeText(this, "Location changed ", Toast.LENGTH_SHORT).show();
         LocationListener.super.onLocationChanged(locations);
     }
 
@@ -506,6 +390,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onPointerCaptureChanged(hasCapture);
     }
 
+    //get location data
     private Location getLastKnownLocation() {
         Location l = null;
         LocationManager mLocationManager = (LocationManager) getApplicationContext().getSystemService(LOCATION_SERVICE);
@@ -522,16 +407,49 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 bestLocation = l;
             }
         }
-        //Toast.makeText(this, "" + bestLocation.getLongitude()+" "+bestLocation.getLatitude(), Toast.LENGTH_LONG).show();
-        getLocationBasedNews(bestLocation.getLatitude(), bestLocation.getLongitude());
+        if (bestLocation == null) {
+            //if best location has no data then use saved default location to get data from api
+            try {
+                SharedPreferences pref = getSharedPreferences("heraldNewsData", Context.MODE_PRIVATE);
+                String lat = pref.getString("def_lat", "");
+                String lon = pref.getString("def_lon", "");
+                getLocationBasedNews(Double.parseDouble(lat), Double.parseDouble(lon));
+                // getLocationBasedNews(bestLocation.getLatitude(), bestLocation.getLongitude());
+                Log.d(getClass().getName(), "Default lat lon loaded ");
+
+            } catch (Exception e) {
+                Toast.makeText(this, "Sorry! Unable to get location details. Please try again.", Toast.LENGTH_LONG).show();
+            }
+
+        } else {
+            try {
+                //load data with accurate location lat and lon
+                SharedPreferences sharedPreferences = getSharedPreferences("heraldNewsData", MODE_PRIVATE);
+                SharedPreferences.Editor editDataHerald = sharedPreferences.edit();
+                Double lat = bestLocation.getLatitude();
+                Double lon = bestLocation.getLongitude();
+
+                editDataHerald.putString("lat", Double.toString(lat));
+                editDataHerald.putString("lon", Double.toString(lon));
+                editDataHerald.commit();
+
+                getLocationBasedNews(bestLocation.getLatitude(), bestLocation.getLongitude());
+            } catch (Exception e) {
+                Toast.makeText(this, "Sorry! Unable to get location. Please try again.", Toast.LENGTH_LONG).show();
+            }
+        }
         return bestLocation;
     }
 
+    //load api with lat and lon
     private void getLocationBasedNews(double lat, double longi) {
+        this.activeMenu = "nearme";
         String BASE_URL = getMetadata(getApplicationContext(), "RAPID_API_BASE_URL");
         RequestQueue queue = Volley.newRequestQueue(this);
         String url = BASE_URL + "news?safeSearch=Off&textFormat=Raw";
         getIPAddress();
+
+        // Toast.makeText(this, "" + lat + " " + longi, Toast.LENGTH_LONG).show();
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
@@ -632,15 +550,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         alertDialog.show();
     }
 
-
+    //get ip address to get accurate location based news from api
     public void getIPAddress() {
         WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
         String ip = Formatter.formatIpAddress(wifiManager.getConnectionInfo().getIpAddress());
         ipAddress = ip;
-        //Toast.makeText(getBaseContext(), ipAddress, Toast.LENGTH_SHORT).show();
-
     }
 
+    //check camera permission
     public void getCameraImage(View view) {
         bitmapImage = null;
         Button btnCamera = findViewById(R.id.btnCamera);
@@ -670,7 +587,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-
+    //save news to firebase
     public void submitReportNews(View view) throws JSONException {
         TextView headline = (TextView) findViewById(R.id.headline);
         TextView desc = (TextView) findViewById(R.id.desc);
@@ -678,7 +595,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         String encodedImage = "";
         String headlineValue = headline.getText().toString();
         String descValue = desc.getText().toString();
-        if((descValue.trim()).length()!=0 && headlineValue.trim().length()!=0){
+        if ((descValue.trim()).length() != 0 && headlineValue.trim().length() != 0) {
             if (bitmapImage != null) {
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 bitmapImage.compress(Bitmap.CompressFormat.JPEG, 100, baos);
@@ -703,7 +620,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
-                    Toast.makeText(getApplicationContext(), "Failed !! News not reported.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Failed !! Error Occurred. Please Try Again.", Toast.LENGTH_SHORT).show();
 
                 }
             }).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -715,12 +632,120 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     bitmapImage = null;
                 }
             });
-        }else{
-            Toast.makeText(getApplicationContext(), "Alert !! Please Enter the Details.", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(getApplicationContext(), "Invalid Entry !! Please Enter the Details.", Toast.LENGTH_SHORT).show();
 
         }
-
-
-
     }
+
+
+    //Search news
+    public void searchNewsbyTopic() {
+        this.activeMenu = "search";
+        String BASE_URL = getMetadata(getApplicationContext(), "RAPID_API_BASE_URL");
+        RequestQueue queue = Volley.newRequestQueue(this);
+        EditText searchTextBox = (EditText) findViewById(R.id.searchtxt);
+        String searchText = String.valueOf(searchTextBox.getText());
+
+        if ((searchText.trim()).length() == 0) {
+            Toast.makeText(this, "Please enter search text", Toast.LENGTH_SHORT).show();
+        } else {
+            String url = Uri.parse(BASE_URL + "news/search")
+                    .buildUpon()
+                    .appendQueryParameter("q", searchText)
+                    .appendQueryParameter("freshness", "Month")
+                    .appendQueryParameter("textFormat", "Raw")
+                    .appendQueryParameter("safeSearch", "Off")
+                    .build().toString();
+
+            StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    ListView newslistview;
+                    ArrayList<NewsListSubjectData> newsList = new ArrayList<NewsListSubjectData>();
+                    newslistview = (ListView) findViewById(R.id.newslist);
+                    newsList.clear();
+                    String status = null;
+                    JSONObject json2 = null;
+                    JSONArray newsValues = null;
+
+                    try {
+                        json2 = new JSONObject(response);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    JSONArray school = null;
+                    try {
+                        newsValues = json2.getJSONArray("value");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    if (newsValues.length() > 0) {
+                        for (int i = 0; i < newsValues.length(); i++) {
+                            JSONObject object = null;
+                            try {
+                                object = newsValues.getJSONObject(i);
+                                SimpleDateFormat sdf = new SimpleDateFormat("y-M-d'T'H:m:s.SSS", Locale.ENGLISH);
+                                Date date = sdf.parse(object.getString("datePublished"));
+                                String image = object.getJSONObject("image").getJSONObject("thumbnail").getString("contentUrl");
+                                int imageWidth = object.getJSONObject("image").getJSONObject("thumbnail").getInt("width");
+                                int imageHeight = object.getJSONObject("image").getJSONObject("thumbnail").getInt("height");
+                                String dateVal = date.toString();
+
+                                newsList.add(new NewsListSubjectData(object.getString("name") + "<br/><font weight='1dp'><i>" + dateVal + "</i></font>", image.toString(), imageWidth, imageHeight, object.getString("url")));
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+
+                        }
+
+                    } else {
+                        newsList.clear();
+                        Toast.makeText(MainActivity.this, "Sorry !! No news available for the topic.", Toast.LENGTH_SHORT).show();
+                    }
+                    NewsListAdapter newsListAdapter = new NewsListAdapter(getApplicationContext(), newsList);
+                    newslistview.setAdapter(newsListAdapter);
+
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.d("That didn't work!", "That didn't work!");
+                }
+            }) {
+
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    Map<String, String> params = new HashMap<String, String>();
+                    params.put("Content-Type", "application/json; charset=UTF-8");
+                    params.put("X-Rapidapi-Key", getMetadata(getApplicationContext(), "RAPID_API_KEY"));
+                    params.put("X-Bingapis-Sdk", "true");
+                    params.put("X-Rapidapi-Host", getMetadata(getApplicationContext(), "RAPID_API_HOST"));
+
+                    return params;
+                }
+
+                //Pass Your Parameters here
+                @Override
+                protected Map<String, String> getParams() {
+                    Map<String, String> params = new HashMap<String, String>();
+
+                    return params;
+                }
+            };
+            queue.add(stringRequest);
+        }
+    }
+
+    //header fragment set username
+    public void setHeaderMainHeader(TextView textView) {
+        SharedPreferences pref = getSharedPreferences("heraldNewsData", Context.MODE_PRIVATE);
+        String name = pref.getString("name", "");
+        textView.setText(name);
+    }
+
 }
